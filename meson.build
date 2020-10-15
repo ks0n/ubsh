@@ -2,10 +2,14 @@ project('ubsh', 'c',
   default_options: [
     'warning_level=3',
     'debug=true',
-    'c_std=c11',
     'b_sanitize=address',
     ])
 
-src = []
+inc = include_directories([ 'lib' ])
 
-executable('ubsh', src)
+src = [
+  'lib/linenoise/linenoise.c',
+  'src/main.c',
+  ]
+
+executable('ubsh', src, include_directories: inc)
