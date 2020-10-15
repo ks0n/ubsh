@@ -16,38 +16,38 @@ let [ mut ] <var> = <value>
 ### Setting a variable
 
 ```rust
-let a = 122
+let fig = 122
 ```
 
-This assigns the string "122" immutably to the variable `a`.
+This assigns the string "122" immutably to the variable `fig`.
 
 ### Mutable variables
 
 ```rust
-let mut a = 144
-a = 145
+let mut tangerine = 144
+tangerine = 145
 ```
 
-Set a mutable variable to "144", then change its value to "145".
+Set a mutable variable to "144", then changes its value to "145".
 
 ### Unsetting a variable
 
 ```
-let a = ubsh
-unlet a
+let pear = ubsh
+unlet pear
 ```
 
-This sets the variable `a` to "ubsh" then unsets it.
+This sets the variable `pear` to "ubsh" then unsets it.
 
 ### Variable expansion
 
 To assign the value of a variable to another, use [string expansion](#string-expansion)
 
 ```rust
-let a = $"{b}"
+let melon = $"{cantaloupe}"
 ```
 
-This assigns the value of the variable `b` to `a`.
+This assigns the value of the variable `cantaloupe` to `melon`.
 
 ## String expansion
 
@@ -64,20 +64,30 @@ the variables `a` and `b` separated by an hyphen and the number 3, do the follow
 echo $"{a}-{b}"
 ```
 
+Thus, the following code
+
+```rust
+let peach_color = pink
+let apple_color = yellow
+echo $"A peach is {peach_color}, while an apple is {apple_color}!"
+```
+
+will evaluate to "A peach is pink, while an apple is yellow!"
+
 ### Displaying curly brackets
 
 You can escape characters when doing string expansion
 
 ```rust
-let a = 12
-echo $"\{a\}"
+let lemon = 12
+echo $"\{lemon\}"
 ```
 
-will display "{a}" without expanding anything
+will display "{lemon}" without expanding anything
 
 ```rust
-let a = 12
-echo $"\{{a}\}"
+let lemon = 12
+echo $"\{{lemon}\}"
 ```
 
 will display "{12}", expanding the value of the `a` variable
