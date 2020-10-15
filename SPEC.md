@@ -91,3 +91,13 @@ echo $"\{{lemon}\}"
 ```
 
 will display "{12}", expanding the value of the `a` variable
+
+## Functions
+
+In ubsh, functions are actually scripts stored on your file system. They contain the code
+to execute when calling the function with `call`
+
+```rust
+func <function_name> = <path>
+call <function_name>
+```
