@@ -1,2 +1,9 @@
+# Any kind of build directories
+build*
+
+# Tags directory
 tags
-build
+
+# clangd
+.clangd
+compile_commands.json
