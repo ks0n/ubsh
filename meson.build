@@ -5,10 +5,11 @@ project('ubsh', 'c',
     'b_sanitize=address',
     ])
 
-inc = include_directories([ 'lib' ])
+inc = include_directories([ 'include', 'lib' ])
 
 src = [
   'lib/linenoise/linenoise.c',
+  'src/prompt.c',
   'src/main.c',
   ]
 
