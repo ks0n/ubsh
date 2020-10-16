@@ -10,6 +10,6 @@
  *
  * @return The generated prompt
  */
-char *prompt_get(void);
+const char *prompt_get(void);
 
 #endif /* ! PROMPT_H */
