@@ -5,14 +5,15 @@
 
 #include "prompt.h"
 
-int main(void) {
-    char *line = NULL;
+int main(void)
+{
+	char *line = NULL;
 
-    while ((line = linenoise(prompt_get()))) {
-        printf("input: %s\n", line);
+	while ((line = linenoise(prompt_get()))) {
+		printf("input: %s\n", line);
 
-        linenoiseFree(line);
-    }
+		linenoiseFree(line);
+	}
 
-    return 0;
+	return 0;
 }
