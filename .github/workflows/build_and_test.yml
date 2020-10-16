@@ -8,9 +8,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - name: Build ubsh
         run: |
           sudo apt install meson ninja-build
+
           meson build
           ninja -C build
 
@@ -20,6 +23,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
       - name: Run Unit Tests
         run: |
           sudo apt install meson ninja-build
