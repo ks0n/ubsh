@@ -1,6 +1,7 @@
 project('ubsh', 'c',
   default_options: [
     'warning_level=3',
+    'werror=true',
     'debug=true',
     'b_sanitize=address',
     ])
