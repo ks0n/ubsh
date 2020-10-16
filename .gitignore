@@ -1,2 +1,5 @@
 tags
 build
+
+# Ubuntu swap files
+*.swp
