@@ -11,6 +11,7 @@ src = [
   'lib/linenoise/linenoise.c',
   'src/prompt.c',
   'src/main.c',
+  'src/charstream.c',
   ]
 
 executable('ubsh', src, include_directories: inc)
