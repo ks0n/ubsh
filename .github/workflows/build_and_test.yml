@@ -1,0 +1,29 @@
+name: ubsh-build-test
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build ubsh
+        run: |
+          sudo apt-get install meson ninja-build
+          meson build
+          cd build
+          ninja
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Unit Tests
+        run: |
+          sudo apt-get install meson ninja-build
+          meson build
+          cd build
+          ninja test
