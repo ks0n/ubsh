@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#include "utils.h"
+
 /**
  * @file charstream.h
  * Transform input from a file descriptor into a stream of characters.
@@ -10,6 +12,7 @@
 
 struct charstream {
 	/* Empty for now, it will be filled as implementation is written. */
+	PHANTOM;
 };
 
 int charstream_init(struct charstream *cs, FILE *file);
