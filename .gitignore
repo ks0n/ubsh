@@ -3,6 +3,10 @@ build*
 
 # Tags directory
 tags
+build
+
+# Vim swap files
+*.swp
 
 # clangd
 .clangd

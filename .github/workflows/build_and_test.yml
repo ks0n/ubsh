@@ -1,0 +1,39 @@
+name: ubsh-build-test
+
+on:
+  push:
+      branches:
+        - main
+
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Build ubsh
+        run: |
+          sudo apt install meson ninja-build
+
+          meson build
+          ninja -C build
+
+  tests:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Run Unit Tests
+        run: |
+          sudo apt install meson ninja-build
+          meson build
+          ninja -C build test
