@@ -4,6 +4,7 @@ project('ubsh', 'c',
     'werror=true',
     'debug=true',
     'b_sanitize=address',
+    'b_lundef=false',
     ])
 
 inc = include_directories([ 'include', 'lib' ])
