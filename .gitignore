@@ -1,5 +1,13 @@
+# Any kind of build directories
+build*
+
+# Tags directory
 tags
 build
 
 # Ubuntu swap files
 *.swp
+
+# clangd
+.clangd
+compile_commands.json
