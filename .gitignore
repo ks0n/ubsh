@@ -5,7 +5,7 @@ build*
 tags
 build
 
-# Ubuntu swap files
+# Vim swap files
 *.swp
 
 # clangd
