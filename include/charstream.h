@@ -1,7 +1,7 @@
 #ifndef CHARSTREAM_H
 #define CHARSTREAM_H
 
-#include <stddef.h>
+#include <stdio.h>
 
 /**
  * @file charstream.h
@@ -12,7 +12,7 @@ struct charstream {
 	/* Empty for now, it will be filled as implementation is written. */
 };
 
-int charstream_init(struct charstream *cs, int fd);
+int charstream_init(struct charstream *cs, FILE *file);
 char charstream_read(struct charstream *cs);
 char charstream_peek(struct charstream *cs);
 

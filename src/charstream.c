@@ -2,7 +2,7 @@
 
 #include "unimplemented.h"
 
-int charstream_init(struct charstream *cs, int fd)
+int charstream_init(struct charstream *cs, FILE *file)
 {
 	UNIMPLEMENTED();
 }
