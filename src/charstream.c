@@ -1,6 +1,6 @@
 #include "charstream.h"
 
-#include "unimplemented.h"
+#include "utils.h"
 
 int charstream_init(struct charstream *cs, FILE *file)
 {
