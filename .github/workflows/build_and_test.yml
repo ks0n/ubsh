@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build ubsh
         run: |
-          apt install meson ninja-build
+          sudo apt install meson ninja-build
           meson build
           ninja -C build
 
@@ -22,6 +22,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Unit Tests
         run: |
-          apt install meson ninja-build
+          sudo apt install meson ninja-build
           meson build
           ninja -C build test
