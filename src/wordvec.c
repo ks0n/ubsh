@@ -26,7 +26,7 @@ void wordvec_del(struct wordvec *wv)
 }
 
 
-static struct wordvec *double_capacity(struct wordvec *wv)
+static int double_capacity(struct wordvec *wv)
 {
 	char *new_vec;
 
@@ -34,17 +34,17 @@ static struct wordvec *double_capacity(struct wordvec *wv)
 
 	new_vec = reallocarray(wv->vec, wv->cap, sizeof(*wv->vec));
 	if (!new_vec)
-		return NULL;
+		return -1;
 
 	wv->vec = new_vec;
 	
-	return wv;
+	return 0;
 }
 
 int wordvec_append(struct wordvec *wv, char c)
 {
 	if (wv->len >= wv->cap - 1)
-		if ((wv = double_capacity(wv)) == NULL)
+		if (double_capacity(wv) < 0)
 			return -1;
 
 	wv->vec[wv->len] = c;
