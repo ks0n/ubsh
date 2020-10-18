@@ -28,11 +28,15 @@ void wordvec_del(struct wordvec *wv)
 
 static struct wordvec *double_capacity(struct wordvec *wv)
 {
+	char *new_vec;
+
 	wv->cap *= 2;
 
-	wv->vec = reallocarray(wv->vec, wv->cap, sizeof(*wv->vec));
-	if (!wv->vec)
+	new_vec = reallocarray(wv->vec, wv->cap, sizeof(*wv->vec));
+	if (!new_vec)
 		return NULL;
+
+	wv->vec = new_vec;
 	
 	return wv;
 }
