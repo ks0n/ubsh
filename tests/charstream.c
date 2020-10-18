@@ -2,7 +2,6 @@
 
 #include "charstream.h"
 
-#define STRING_EMPTY ""
 #define STRING_TEST "test"
 
 static FILE *open_string(char *str)
