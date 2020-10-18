@@ -3,6 +3,19 @@
 #include "charstream.h"
 #include "utils.h"
 
+static char get_error(struct charstream *cs)
+{
+	char chr;
+	if (feof(cs->file)) {
+		chr = CHARSTREAM_EOF;
+	} else {
+		chr = CHARSTREAM_ERR;
+	}
+	clearerr(cs->file);
+
+	return chr;
+}
+
 int charstream_init(struct charstream *cs, FILE *file)
 {
 	assert(file);
@@ -13,14 +26,9 @@ int charstream_init(struct charstream *cs, FILE *file)
 }
 char charstream_read(struct charstream *cs)
 {
-	char chr;
-	if (fread(&chr, sizeof(char), 1, cs->file) == 0) {
-		if (feof(cs->file)) {
-			chr = CHARSTREAM_EOF;
-		} else {
-			chr = CHARSTREAM_ERR;
-		}
-		clearerr(cs->file);
+	char chr = fgetc(cs->file);
+	if (chr == EOF) {
+		return get_error(cs);
 	}
 
 	return chr;
@@ -29,8 +37,9 @@ char charstream_read(struct charstream *cs)
 char charstream_peek(struct charstream *cs)
 {
 	char chr = charstream_read(cs);
-	if (chr != CHARSTREAM_ERR)
-		fseek(cs->file, -1, SEEK_CUR);
+	if (chr != CHARSTREAM_ERR && chr != CHARSTREAM_EOF)
+		if (ungetc(chr, cs->file) == EOF)
+			return get_error(cs);
 
 	return chr;
 }
