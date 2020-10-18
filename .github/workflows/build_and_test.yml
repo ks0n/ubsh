@@ -19,8 +19,9 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
-          sudo apt install meson ninja-build
-
+          sudo add-apt-repository ppa:snaipewastaken/ppa
+          sudo apt-get update
+          sudo apt install meson ninja-build criterion-dev
           meson build
           ninja -C build
 
@@ -34,6 +35,8 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
-          sudo apt install meson ninja-build
+          sudo add-apt-repository ppa:snaipewastaken/ppa
+          sudo apt-get update
+          sudo apt install meson ninja-build criterion-dev
           meson build
           ninja -C build test
