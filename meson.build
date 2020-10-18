@@ -14,4 +14,15 @@ src = [
   'src/charstream.c',
   ]
 
+
 executable('ubsh', src, include_directories: inc)
+
+unit_tests_src = [
+  'src/charstream.c',
+  'tests/charstream.c'
+  ]
+criterion = dependency('criterion')
+
+unit_tests = executable('unit_tests', unit_tests_src, dependencies: [criterion], include_directories: inc)
+
+test('Unit tests', unit_tests)
