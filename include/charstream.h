@@ -8,7 +8,6 @@
  * Transform input from a file descriptor into a stream of characters.
  */
 
-
 #define CHARSTREAM_EOF (EOF)
 #define CHARSTREAM_ERR (-2)
 
