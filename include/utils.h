@@ -4,7 +4,6 @@
 #include <err.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 /**
  * Mark a function as unimplemented and error out when called
  */
