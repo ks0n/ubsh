@@ -3,11 +3,14 @@
 
 #include <stdlib.h>
 
+#define WORDVEC_DEFAULT_CAP 8
+
 struct wordvec {
   size_t cap;
   size_t len;
   char *vec;
 };
+
 
 struct wordvec *wordvec_new(void);
 void wordvec_del(struct wordvec *wv);

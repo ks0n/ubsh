@@ -8,7 +8,7 @@ struct wordvec *wordvec_new(void)
 		return NULL;
 
 	wv->len = 0;
-	wv->cap = 8;
+	wv->cap = WORDVEC_DEFAULT_CAP;
 
 	wv->vec = calloc(wv->cap, sizeof(*wv->vec));
 	if (!wv->vec) {
