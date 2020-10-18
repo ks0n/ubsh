@@ -21,7 +21,7 @@ struct token *token_new(void)
 
 	tok->type = TOKTYPE_UNCATEGORIZED;
 	tok->quoted = false;
-	tok->finished = false;
+	tok->delimited = false;
 
 	tok->word = wordvec_new();
 	if (!tok->word) {
@@ -46,7 +46,7 @@ int token_append(struct token *tok, char c)
 	return 0;
 }
 
-bool token_is_delimited(struct token *tok)
+bool token_is_delimited(const struct token *tok)
 {
 	return tok->delimited;
 }

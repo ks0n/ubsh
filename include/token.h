@@ -18,8 +18,8 @@ void token_del(struct token *tok);
 
 int token_append(struct token *tok, char c);
 
-bool token_finished(const struct token *tok);
-void token_finish(struct token *tok);
+bool token_is_delimited(const struct token *tok);
+void token_delimit(struct token *tok);
 
 const char *token_characters(const struct token *tok);
 

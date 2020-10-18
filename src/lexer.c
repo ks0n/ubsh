@@ -42,7 +42,7 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 	char c = charstream_read(&l->stream);
 
 	if (c == CHARSTREAM_EOF) {
-		token_finish(tok);
+		token_delimit(tok);
 		return 0;
 	}
 
@@ -53,11 +53,12 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 
 	if (!inside_quoting(&l->quoting) && isblank(c)) {
 		token_finish(tok);
+		token_delimit(tok);
 		return 0;
 	}
 	
 	if (!inside_quoting(&l->quoting) && c == '\n') {
-		token_finish(tok);
+		token_delimit(tok);
 		return 0;
 	}
 	
@@ -84,7 +85,7 @@ const struct token *lexer_read(struct lexer *l)
 		return NULL;
 	}
 
-	while (!token_finished(l->cur)) {
+	while (!token_is_delimited(l->cur)) {
 		lexer_consume_char(l, l->cur);
 	}
 
