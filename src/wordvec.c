@@ -25,7 +25,6 @@ void wordvec_del(struct wordvec *wv)
 	free(wv);
 }
 
-
 static int double_capacity(struct wordvec *wv)
 {
 	char *new_vec;
@@ -37,7 +36,7 @@ static int double_capacity(struct wordvec *wv)
 		return -1;
 
 	wv->vec = new_vec;
-	
+
 	return 0;
 }
 

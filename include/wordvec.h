@@ -6,11 +6,10 @@
 #define WORDVEC_DEFAULT_CAP 8
 
 struct wordvec {
-  size_t cap;
-  size_t len;
-  char *vec;
+	size_t cap;
+	size_t len;
+	char *vec;
 };
-
 
 struct wordvec *wordvec_new(void);
 void wordvec_del(struct wordvec *wv);
@@ -19,12 +18,12 @@ int wordvec_append(struct wordvec *wv, char c);
 
 static inline const char *wordvec_chars(const struct wordvec *wv)
 {
-  return wv->vec;
+	return wv->vec;
 }
 
 static inline size_t wordvec_len(const struct wordvec *wv)
 {
-  return wv->len;
+	return wv->len;
 }
 
 #endif /* ! WORDVEC_H */
