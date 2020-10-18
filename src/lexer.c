@@ -40,24 +40,33 @@ static void discard_line(struct lexer *l)
 static int lexer_consume_char(struct lexer *l, struct token *tok)
 {
 	char c = charstream_read(&l->stream);
+	bool is_quoted = inside_quoting(&l->quoting);
+
+	/* step_quoting */
+	if (l->quoting.backslashed > 0)
+		l->quoting.backslashed--;
 
 	if (c == CHARSTREAM_EOF) {
 		token_delimit(tok);
 		return 0;
 	}
 
-	if (c == '#') {
+	if (!is_quoted && c == '\\') {
+		l->quoting.backslashed = 1;
+		return 0;
+	}
+
+	if (!is_quoted && c == '#') {
 		discard_line(l);
 		return 0;
 	}
 
-	if (!inside_quoting(&l->quoting) && isblank(c)) {
-		token_finish(tok);
+	if (!is_quoted && isblank(c)) {
 		token_delimit(tok);
 		return 0;
 	}
 	
-	if (!inside_quoting(&l->quoting) && c == '\n') {
+	if (!is_quoted && c == '\n') {
 		token_delimit(tok);
 		return 0;
 	}
