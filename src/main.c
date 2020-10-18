@@ -6,28 +6,35 @@
 
 #include "prompt.h"
 #include "charstream.h"
+#include "lexer.h"
 
 int main(void)
 {
 	char *line = NULL;
+	size_t line_len;
 
 	while ((line = linenoise(prompt_get()))) {
-		struct charstream stream;
-		FILE *file = fmemopen(line, strlen(line), "r");
-		charstream_init(&stream, file);
+		line_len = strlen(line);
 
-		printf("input: ");
-		while (1) {
-			char c = charstream_read(&stream);
-			if (c == CHARSTREAM_EOF || c == CHARSTREAM_ERR)
-				break;
+		if (!line || !line_len)
+			continue;
 
-			fputc(c, stdout);
-		}
+		struct lexer lexer;
+		const struct token *tok = NULL;
+		FILE *file = fmemopen(line, line_len, "r");
+		lexer_init(&lexer, file);
 
-		putc('\n', stdout);
+		printf("tokens: ");
+
+		do {
+			tok = lexer_read(&lexer);
+			printf("%s ", token_characters(tok));
+		} while (tok && !token_is_eof(tok));
+
+		puts("");
 		fclose(file);
 
+		lexer_cleanup(&lexer);
 		linenoiseFree(line);
 	}
 
