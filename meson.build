@@ -3,6 +3,7 @@ project('ubsh', 'c',
     'warning_level=3',
     'debug=true',
     'b_sanitize=address',
+    'c_std=c99',
     ])
 
 inc = include_directories([ 'include', 'lib' ])
@@ -11,6 +12,9 @@ src = [
   'lib/linenoise/linenoise.c',
   'src/prompt.c',
   'src/charstream.c',
+  'src/wordvec.c',
+  'src/token.c',
+  'src/lexer.c',
   ]
 
 main = [
