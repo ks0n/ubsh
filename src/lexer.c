@@ -43,8 +43,8 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 	bool is_quoted = inside_quoting(&l->quoting);
 
 	/* step_quoting */
-	if (l->quoting.backslashed > 0)
-		l->quoting.backslashed--;
+	if (l->quoting.backslashed)
+		l->quoting.backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
 		token_delimit(tok);
@@ -52,7 +52,7 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 	}
 
 	if (!is_quoted && c == '\\') {
-		l->quoting.backslashed = 1;
+		l->quoting.backslashed = true;
 		return 0;
 	}
 
