@@ -4,19 +4,19 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+enum toktype {
+	TOKTYPE_UNCATEGORIZED,
+	TOKTYPE_WORD,
+	TOKTYPE_OPERATOR,
+	TOKTYPE_EOF,
+};
+
 struct token {
 	enum toktype type;
 	bool quoted;
 	bool delimited;
 
 	struct wordvec *word;
-};
-
-enum toktype {
-	TOKTYPE_UNCATEGORIZED,
-	TOKTYPE_WORD,
-	TOKTYPE_OPERATOR,
-	TOKTYPE_EOF,
 };
 
 struct token *token_new(void);

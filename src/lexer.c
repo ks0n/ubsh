@@ -37,7 +37,33 @@ static void discard_line(struct lexer *l)
 	} while (c != CHARSTREAM_EOF && c != '\n');
 }
 
-static int lexer_consume_char(struct lexer *l, struct token *tok)
+/**
+ * Delimit the latest token the lexer is constructing.
+ *
+ * If lexer_consume is called again, it will start work on a new token.
+ */
+static void lexer_delimit(struct lexer *l)
+{
+	token_delimit(l->cur);
+}
+
+/**
+ * Append a character to the latest token the lexer is constructing.
+ */
+static int lexer_append_char(struct lexer *l, char c)
+{
+	return token_append(l->cur, c);
+}
+
+/**
+ * Wether the lexer has delimited its latest token.
+ */
+static bool lexer_has_delimited(struct lexer *l)
+{
+	return token_is_delimited(l->cur);
+}
+
+static int lexer_consume_char(struct lexer *l)
 {
 	char c = charstream_read(&l->stream);
 	bool is_quoted = inside_quoting(&l->quoting);
@@ -47,7 +73,7 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 		l->quoting.backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
-		token_delimit(tok);
+		lexer_delimit(l);
 		return 0;
 	}
 
@@ -62,29 +88,26 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 	}
 
 	if (!is_quoted && isblank(c)) {
-		token_delimit(tok);
+		lexer_delimit(l);
 		return 0;
 	}
 
 	if (!is_quoted && c == '\n') {
-		token_delimit(tok);
+		lexer_delimit(l);
 		return 0;
 	}
 
-	if (token_append(tok, c) < 0)
+	if (lexer_append_char(l, c) < 0)
 		return -1;
 
 	return 0;
 }
 
-/**
- * Read chars from the charstream owned by @l until a token is delimited.
- * Think of this as an iterator over the input tokens.
- *
- * @return token read by the lexer (the token is owned by the lexer)
- */
 const struct token *lexer_consume(struct lexer *l)
 {
+	struct quoting_state quoting;
+	quoting_reset(&quoting);
+
 	if (l->cur)
 		token_del(l->cur);
 
@@ -94,8 +117,8 @@ const struct token *lexer_consume(struct lexer *l)
 		return NULL;
 	}
 
-	while (!token_is_delimited(l->cur)) {
-		lexer_consume_char(l, l->cur);
+	while (!lexer_has_delimited(l)) {
+		lexer_consume_char(l);
 	}
 
 	return l->cur;
