@@ -4,6 +4,20 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "utils.h"
+#include "wordvec.h"
+
+struct {
+	const char *str;
+	enum toktype type;
+} operators[] = {
+	{ "&&", TOKTYPE_AND_IF },     { "||", TOKTYPE_OR_IF },
+	{ ";;", TOKTYPE_DSEMI },      { "<<", TOKTYPE_DLESS },
+	{ ">>", TOKTYPE_DGREAT },     { "<&", TOKTYPE_LESSAND },
+	{ ">&", TOKTYPE_GREATAND },   { "<>", TOKTYPE_LESSGREAT },
+	{ "<<-", TOKTYPE_DLESSDASH }, { ">|", TOKTYPE_CLOBBER },
+};
+
 static void quoting_reset(struct quoting_state *q)
 {
 	memset(q, 0, sizeof(*q));
@@ -54,11 +68,42 @@ static int lexer_append_char(struct lexer *l, char c)
 }
 
 /**
+ * Removes last char appended to the lexer.
+ */
+static int lexer_pop_char(struct lexer *l)
+{
+	return token_pop(l->cur);
+}
+
+/**
  * Wether the lexer has delimited its latest token.
  */
 static bool lexer_has_delimited(struct lexer *l)
 {
 	return token_is_delimited(l->cur);
+}
+
+/**
+ * Check if current token in the lexer can form an opperator and if yes, wich
+ * one. Returns TOKTYPE_UNCATEGORIZED otherwise.
+ */
+static enum toktype is_operator(struct lexer *l)
+{
+	enum toktype type = TOKTYPE_UNCATEGORIZED;
+	size_t tok_len = wordvec_len(l->cur->word);
+
+	if (tok_len < 1)
+		return type;
+
+	for (size_t i = 0; i < ARRAY_LENGTH(operators); i++) {
+		if (!strncmp(token_characters(l->cur), operators[i].str,
+			     tok_len)) {
+			type = operators[i].type;
+			break;
+		}
+	}
+
+	return type;
 }
 
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
@@ -72,6 +117,17 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
+	enum toktype type;
+
+	if ((type = is_operator(l)) != TOKTYPE_UNCATEGORIZED) {
+		lexer_append_char(l, c);
+		if (is_operator(l) != TOKTYPE_UNCATEGORIZED) {
+			l->cur->type = type;
+			return 0;
+		}
+		lexer_pop_char(l);
+		lexer_delimit(l);
+	}
 	if (c == '\\') {
 		quoting->backslashed = true;
 		return 0;

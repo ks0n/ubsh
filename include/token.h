@@ -7,8 +7,19 @@
 enum toktype {
 	TOKTYPE_UNCATEGORIZED,
 	TOKTYPE_WORD,
-	TOKTYPE_OPERATOR,
 	TOKTYPE_EOF,
+
+	/* Operators */
+	TOKTYPE_AND_IF,
+	TOKTYPE_OR_IF,
+	TOKTYPE_DSEMI,
+	TOKTYPE_DLESS,
+	TOKTYPE_DGREAT,
+	TOKTYPE_LESSAND,
+	TOKTYPE_GREATAND,
+	TOKTYPE_LESSGREAT,
+	TOKTYPE_DLESSDASH,
+	TOKTYPE_CLOBBER,
 };
 
 struct token {
@@ -23,6 +34,7 @@ struct token *token_new(void);
 void token_del(struct token *tok);
 
 int token_append(struct token *tok, char c);
+int token_pop(struct token *tok);
 
 bool token_is_delimited(const struct token *tok);
 void token_delimit(struct token *tok);

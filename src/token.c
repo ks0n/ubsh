@@ -38,6 +38,11 @@ int token_append(struct token *tok, char c)
 	return 0;
 }
 
+int token_pop(struct token *tok)
+{
+	wordvec_pop(tok->word);
+}
+
 bool token_is_delimited(const struct token *tok)
 {
 	return tok->delimited;
@@ -59,7 +64,10 @@ static void categorize(struct token *tok)
 		bool (*check)(struct token *tok);
 	} token_check[] = { { TOKTYPE_EOF, token_eof_check },
 			    { TOKTYPE_WORD, token_word_check } };
-	tok->type = TOKTYPE_UNCATEGORIZED;
+
+	/* We might already have an obvious categorization at this stage */
+	if (tok->type != TOKTYPE_UNCATEGORIZED)
+		return;
 
 	for (size_t i = 0; i < ARRAY_LENGTH(token_check); i++) {
 		if ((token_check[i].check)(tok)) {

@@ -51,3 +51,14 @@ int wordvec_append(struct wordvec *wv, char c)
 
 	return 0;
 }
+
+int wordvec_pop(struct wordvec *wv)
+{
+	if (wv->len < 1)
+		return 1;
+
+	wv->vec[wv->len - 1] = '\0';
+	wv->len -= 1;
+
+	return 0;
+}
