@@ -61,12 +61,53 @@ static bool lexer_has_delimited(struct lexer *l)
 	return token_is_delimited(l->cur);
 }
 
+static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
+{
+	if (lexer_append_char(l, c) < 0)
+		return -1;
+
+	return 0;
+}
+
+static int handle_unquoted(struct lexer *l, struct quoting_state *quoting, char c)
+{
+	if (c == '\\') {
+		quoting->backslashed = true;
+		return 0;
+	}
+
+	if (c == '#') {
+		discard_line(l);
+		return 0;
+	}
+
+	if (isblank(c)) {
+		lexer_delimit(l);
+		return 0;
+	}
+
+	if (c == '\n') {
+		lexer_delimit(l);
+		return 0;
+	}
+
+	if (lexer_append_char(l, c) < 0)
+		return -1;
+
+	return 0;
+}
+
 static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 {
 	char c = charstream_read(&l->stream);
-	bool is_quoted = inside_quoting(quoting);
+	bool is_quoted;
 
-	/* step_quoting */
+	/*
+	 * Save if we are currently quoted.
+	 * If it was backslash quoting disable so that the future chars aren't backslash quoted too.
+	 * Since be saved the if we were quoted, the current char will be fine quote-wise
+         */
+	is_quoted = inside_quoting(quoting);
 	if (quoting->backslashed)
 		quoting->backslashed = false;
 
@@ -75,28 +116,10 @@ static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 		return 0;
 	}
 
-	if (!is_quoted && c == '\\') {
-		quoting->backslashed = true;
-		return 0;
-	}
-
-	if (!is_quoted && c == '#') {
-		discard_line(l);
-		return 0;
-	}
-
-	if (!is_quoted && isblank(c)) {
-		lexer_delimit(l);
-		return 0;
-	}
-
-	if (!is_quoted && c == '\n') {
-		lexer_delimit(l);
-		return 0;
-	}
-
-	if (lexer_append_char(l, c) < 0)
-		return -1;
+	if (is_quoted)
+		handle_quoted(l, quoting, c);
+	else
+		handle_unquoted(l, quoting, c);
 
 	return 0;
 }
