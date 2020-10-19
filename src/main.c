@@ -24,12 +24,15 @@ int main(void)
 		FILE *file = fmemopen(line, line_len, "r");
 		lexer_init(&lexer, file);
 
-		printf("tokens: ");
+		printf("tokens:");
 
-		do {
+		while (1) {
 			tok = lexer_read(&lexer);
-			printf("%s ", token_characters(tok));
-		} while (tok && !token_is_eof(tok));
+			if (!tok || token_is_eof(tok))
+				break;
+
+			printf(" | %s", token_characters(tok));
+		}
 
 		puts("");
 		fclose(file);

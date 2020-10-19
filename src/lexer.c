@@ -11,7 +11,7 @@ static void quoting_reset(struct quoting_state *q)
 
 static bool inside_quoting(const struct quoting_state *q)
 {
-	return q->backslashed == true;
+	return q->backslashed || q->single_quoted;
 }
 
 int lexer_init(struct lexer *l, FILE *input)
@@ -37,42 +37,97 @@ static void discard_line(struct lexer *l)
 	} while (c != CHARSTREAM_EOF && c != '\n');
 }
 
+static int handle_unquoted(struct lexer *l, struct quoting_state *quoting, struct token *tok, char c)
+{
+	if (c == '\\') {
+		quoting->backslashed = true;
+		return 0;
+	}
+
+	if (c == '\'') {
+		quoting->single_quoted = true;
+		return 0;
+	}
+
+	if (c == '"') {
+		quoting->double_quoted = true;
+		return 0;
+	}
+
+	if (c == '#') {
+		discard_line(l);
+		return 0;
+	}
+
+	if (isblank(c)) {
+		token_delimit(tok);
+		return 0;
+	}
+	
+	if (c == '\n') {
+		token_delimit(tok);
+		return 0;
+	}
+
+	if (token_append(tok, c) < 0)
+		return -1;
+
+	return 0;
+}
+
+static int handle_quoted(struct lexer *l, struct quoting_state *quoting, struct token *tok, char c)
+{
+	if (quoting->single_quoted && c == '\'') {
+		quoting->single_quoted = false;
+		return 0;
+	}
+
+	if (quoting->double_quoted && c == '\"') {
+		quoting->double_quoted = false;
+		return 0;
+	}
+
+	if (quoting->double_quoted && c == '\\') {
+		char next = charstream_peek(&l->stream);
+
+		if (next == '$' || next == '`' || next == '"' || next == '\\' || next == '\n')
+			quoting->backslashed = true;
+	}
+
+	if (quoting->double_quoted && c == '$') {
+		char next = charstream_peek(&l->stream);
+
+		if (next == '{') {
+			struct quoting q;
+			/* TODO: push the current token into the token queue. */
+		}
+	}
+
+	if (token_append(tok, c) < 0)
+		return -1;
+
+	return 0;
+}
+
 static int lexer_consume_char(struct lexer *l, struct token *tok)
 {
 	char c = charstream_read(&l->stream);
 	bool is_quoted = inside_quoting(&l->quoting);
 
 	/* step_quoting */
-	if (l->quoting.backslashed > 0)
-		l->quoting.backslashed--;
+	if (l->quoting.backslashed)
+		l->quoting.backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
 		token_delimit(tok);
 		return 0;
 	}
 
-	if (!is_quoted && c == '\\') {
-		l->quoting.backslashed = 1;
-		return 0;
-	}
-
-	if (!is_quoted && c == '#') {
-		discard_line(l);
-		return 0;
-	}
-
-	if (!is_quoted && isblank(c)) {
-		token_delimit(tok);
-		return 0;
-	}
+	if (is_quoted)
+		return handle_quoted(l, &l->quoting, tok, c);
+	else
+		return handle_unquoted(l, &l->quoting, tok, c);
 	
-	if (!is_quoted && c == '\n') {
-		token_delimit(tok);
-		return 0;
-	}
-	
-	if (token_append(tok, c) < 0)
-		return -1;
 
 	return 0;
 }

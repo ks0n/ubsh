@@ -8,6 +8,8 @@
 
 struct quoting_state {
   bool backslashed;
+  bool single_quoted;
+  bool double_quoted;
 };
 
 struct lexer {
