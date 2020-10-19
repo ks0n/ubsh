@@ -20,6 +20,6 @@ struct lexer {
 int lexer_init(struct lexer *l, FILE *input);
 void lexer_cleanup(struct lexer *l);
 
-const struct token *lexer_read(struct lexer *l);
+const struct token *lexer_consume(struct lexer *l);
 
 #endif /* ! LEXER_H */

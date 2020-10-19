@@ -27,7 +27,7 @@ int main(void)
 		printf("tokens:\n");
 
 		do {
-			tok = lexer_read(&lexer);
+			tok = lexer_consume(&lexer);
 			printf("- \"%s\", type: %i\n", token_characters(tok),
 			       token_type(tok));
 		} while (tok && !token_is_eof(tok));

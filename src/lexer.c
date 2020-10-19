@@ -83,7 +83,7 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
  *
  * @return token read by the lexer (the token is owned by the lexer)
  */
-const struct token *lexer_read(struct lexer *l)
+const struct token *lexer_consume(struct lexer *l)
 {
 	if (l->cur)
 		token_del(l->cur);
