@@ -3,7 +3,7 @@ project('ubsh', 'c',
     'warning_level=3',
     'debug=true',
     'b_sanitize=address',
-    'std=gnu89',
+    'c_std=c99',
     ])
 
 inc = include_directories([ 'include', 'lib' ])
