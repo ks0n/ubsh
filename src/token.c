@@ -5,14 +5,6 @@
 #include "wordvec.h"
 #include "utils.h"
 
-struct token {
-	enum toktype type;
-	bool quoted;
-	bool delimited;
-
-	struct wordvec *word;
-};
-
 struct token *token_new(void)
 {
 	struct token *tok = malloc(sizeof(*tok));

@@ -4,7 +4,13 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct token;
+struct token {
+	enum toktype type;
+	bool quoted;
+	bool delimited;
+
+	struct wordvec *word;
+};
 
 enum toktype {
 	TOKTYPE_UNCATEGORIZED,
