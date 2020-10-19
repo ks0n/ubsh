@@ -69,7 +69,8 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 	return 0;
 }
 
-static int handle_unquoted(struct lexer *l, struct quoting_state *quoting, char c)
+static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
+			   char c)
 {
 	if (c == '\\') {
 		quoting->backslashed = true;
