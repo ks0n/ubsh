@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #include "wordvec.h"
+#include "utils.h"
 
 struct token {
   enum toktype type;
@@ -51,12 +52,30 @@ bool token_is_delimited(const struct token *tok)
 	return tok->delimited;
 }
 
+static bool token_eof_check(struct token *tok) {
+	return wordvec_len(tok->word) == 0;
+}
+static bool token_word_check(struct token *tok) {
+	return true;
+}
+
 static void categorize(struct token *tok)
 {
-	if (wordvec_len(tok->word) == 0)
-		tok->type = TOKTYPE_EOF;
-	else
-		tok->type = TOKTYPE_WORD;
+	struct {
+		enum toktype type;
+		bool (*check)(struct token *tok);
+	} token_check [] = {
+		{TOKTYPE_EOF, token_eof_check},
+		{TOKTYPE_WORD, token_word_check}
+	};
+	tok->type = TOKTYPE_UNCATEGORIZED;
+
+	for (size_t i = 0; i < ARRAY_LENGTH(token_check); i++) {
+		if ((token_check[i].check)(tok)) {
+			tok->type = token_check[i].type;
+			return;
+		}
+	}
 }
 
 void token_delimit(struct token *tok)
