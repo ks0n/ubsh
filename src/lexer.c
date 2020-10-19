@@ -87,16 +87,16 @@ static bool lexer_has_delimited(struct lexer *l)
  * Check if current token in the lexer can form an opperator and if yes, wich
  * one. Returns TOKTYPE_UNCATEGORIZED otherwise.
  */
-static enum toktype is_operator(struct lexer *l)
+static enum toktype is_operator(struct token *tok)
 {
 	enum toktype type = TOKTYPE_UNCATEGORIZED;
-	size_t tok_len = wordvec_len(l->cur->word);
+	size_t tok_len = wordvec_len(tok->word);
 
 	if (tok_len < 1)
 		return type;
 
 	for (size_t i = 0; i < ARRAY_LENGTH(operators); i++) {
-		if (!strncmp(token_characters(l->cur), operators[i].str,
+		if (!strncmp(token_characters(tok), operators[i].str,
 			     tok_len)) {
 			type = operators[i].type;
 			break;
@@ -119,9 +119,9 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 {
 	enum toktype type;
 
-	if ((type = is_operator(l)) != TOKTYPE_UNCATEGORIZED) {
+	if ((type = is_operator(l->cur)) != TOKTYPE_UNCATEGORIZED) {
 		lexer_append_char(l, c);
-		if (is_operator(l) != TOKTYPE_UNCATEGORIZED) {
+		if (is_operator(l->cur) != TOKTYPE_UNCATEGORIZED) {
 			l->cur->type = type;
 			return 0;
 		}
