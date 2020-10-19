@@ -28,7 +28,8 @@ int main(void)
 
 		do {
 			tok = lexer_read(&lexer);
-			printf("- \"%s\", type: %i\n", token_characters(tok), token_type(tok));
+			printf("- \"%s\", type: %i\n", token_characters(tok),
+			       token_type(tok));
 		} while (tok && !token_is_eof(tok));
 
 		puts("");

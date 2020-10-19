@@ -7,10 +7,10 @@
 struct token;
 
 enum toktype {
-  TOKTYPE_UNCATEGORIZED,
-  TOKTYPE_WORD,
-  TOKTYPE_OPERATOR,
-  TOKTYPE_EOF,
+	TOKTYPE_UNCATEGORIZED,
+	TOKTYPE_WORD,
+	TOKTYPE_OPERATOR,
+	TOKTYPE_EOF,
 };
 
 struct token *token_new(void);
@@ -26,6 +26,5 @@ const char *token_characters(const struct token *tok);
 enum toktype token_type(const struct token *tok);
 
 bool token_is_eof(const struct token *tok);
-
 
 #endif /* ! TOKEN_H */

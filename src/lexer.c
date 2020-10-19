@@ -65,12 +65,12 @@ static int lexer_consume_char(struct lexer *l, struct token *tok)
 		token_delimit(tok);
 		return 0;
 	}
-	
+
 	if (!is_quoted && c == '\n') {
 		token_delimit(tok);
 		return 0;
 	}
-	
+
 	if (token_append(tok, c) < 0)
 		return -1;
 

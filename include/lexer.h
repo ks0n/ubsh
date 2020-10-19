@@ -7,14 +7,14 @@
 #include "token.h"
 
 struct quoting_state {
-  bool backslashed;
+	bool backslashed;
 };
 
 struct lexer {
-  struct charstream stream;
-  struct quoting_state quoting;
+	struct charstream stream;
+	struct quoting_state quoting;
 
-  struct token *cur;
+	struct token *cur;
 };
 
 int lexer_init(struct lexer *l, FILE *input);

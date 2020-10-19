@@ -6,12 +6,11 @@
 #include "utils.h"
 
 struct token {
-  enum toktype type;
-  bool quoted;
-  bool delimited;
+	enum toktype type;
+	bool quoted;
+	bool delimited;
 
-
-  struct wordvec *word;
+	struct wordvec *word;
 };
 
 struct token *token_new(void)
@@ -52,10 +51,12 @@ bool token_is_delimited(const struct token *tok)
 	return tok->delimited;
 }
 
-static bool token_eof_check(struct token *tok) {
+static bool token_eof_check(struct token *tok)
+{
 	return wordvec_len(tok->word) == 0;
 }
-static bool token_word_check(struct token *tok) {
+static bool token_word_check(struct token *tok)
+{
 	return true;
 }
 
@@ -64,10 +65,8 @@ static void categorize(struct token *tok)
 	struct {
 		enum toktype type;
 		bool (*check)(struct token *tok);
-	} token_check [] = {
-		{TOKTYPE_EOF, token_eof_check},
-		{TOKTYPE_WORD, token_word_check}
-	};
+	} token_check[] = { { TOKTYPE_EOF, token_eof_check },
+			    { TOKTYPE_WORD, token_word_check } };
 	tok->type = TOKTYPE_UNCATEGORIZED;
 
 	for (size_t i = 0; i < ARRAY_LENGTH(token_check); i++) {
