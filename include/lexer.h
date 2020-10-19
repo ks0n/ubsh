@@ -12,7 +12,6 @@ struct quoting_state {
 
 struct lexer {
 	struct charstream stream;
-	struct quoting_state quoting;
 
 	struct token *cur;
 };

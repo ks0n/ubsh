@@ -21,8 +21,6 @@ int lexer_init(struct lexer *l, FILE *input)
 		return -1;
 	}
 
-	quoting_reset(&l->quoting);
-
 	l->cur = NULL;
 
 	return 0;
@@ -63,14 +61,14 @@ static bool lexer_has_delimited(struct lexer *l)
 	return token_is_delimited(l->cur);
 }
 
-static int lexer_consume_char(struct lexer *l)
+static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 {
 	char c = charstream_read(&l->stream);
-	bool is_quoted = inside_quoting(&l->quoting);
+	bool is_quoted = inside_quoting(quoting);
 
 	/* step_quoting */
-	if (l->quoting.backslashed)
-		l->quoting.backslashed = false;
+	if (quoting->backslashed)
+		quoting->backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
 		lexer_delimit(l);
@@ -78,7 +76,7 @@ static int lexer_consume_char(struct lexer *l)
 	}
 
 	if (!is_quoted && c == '\\') {
-		l->quoting.backslashed = true;
+		quoting->backslashed = true;
 		return 0;
 	}
 
@@ -118,7 +116,7 @@ const struct token *lexer_consume(struct lexer *l)
 	}
 
 	while (!lexer_has_delimited(l)) {
-		lexer_consume_char(l);
+		lexer_consume_char(l, &quoting);
 	}
 
 	return l->cur;
