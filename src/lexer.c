@@ -17,7 +17,7 @@ static bool inside_quoting(const struct quoting_state *q)
 int lexer_init(struct lexer *l, FILE *input)
 {
 	if (charstream_init(&l->stream, input) < 0) {
-		warnx("%s: failed to init charstream", __FUNCTION__);
+		warnx("%s: failed to init charstream", __func__);
 		return -1;
 	}
 
@@ -135,7 +135,7 @@ const struct token *lexer_consume(struct lexer *l)
 
 	l->cur = token_new();
 	if (!l->cur) {
-		warnx("%s: failed to create token", __FUNCTION__);
+		warnx("%s: failed to create token", __func__);
 		return NULL;
 	}
 
