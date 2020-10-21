@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "linenoise/linenoise.h"
+#include <readline/readline.h>
 
 #include "prompt.h"
 #include "charstream.h"
@@ -13,7 +13,7 @@ int main(void)
 	char *line = NULL;
 	size_t line_len;
 
-	while ((line = linenoise(prompt_get()))) {
+	while ((line = readline(prompt_get()))) {
 		line_len = strlen(line);
 
 		if (!line || !line_len)
@@ -36,7 +36,7 @@ int main(void)
 		fclose(file);
 
 		lexer_cleanup(&lexer);
-		linenoiseFree(line);
+		free(line);
 	}
 
 	return 0;

@@ -6,10 +6,9 @@ project('ubsh', 'c',
     'c_std=c99',
     ])
 
-inc = include_directories([ 'include', 'lib' ])
+add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
 
 src = [
-  'lib/linenoise/linenoise.c',
   'src/prompt.c',
   'src/charstream.c',
   'src/wordvec.c',
@@ -21,7 +20,8 @@ main = [
   'src/main.c',
   ]
 
-executable('ubsh', src, main, include_directories: inc)
+readline = dependency('readline')
+executable('ubsh', src, main, dependencies: [readline], include_directories: inc)
 
 unit_tests_src = [
   'tests/charstream.c',
@@ -29,7 +29,6 @@ unit_tests_src = [
   ]
 
 criterion = dependency('criterion')
-
 unit_tests = executable('unit_tests', src, unit_tests_src, dependencies: [criterion], include_directories: inc)
 
 test('Unit tests', unit_tests)
