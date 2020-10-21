@@ -6,7 +6,7 @@
 
 #define UNIMPLEMENTED()                                                        \
 	errx(EXIT_FAILURE, "function %s in %s:%d not implemented",             \
-	     __FUNCTION__, __FILE__, __LINE__)
+	     __func__, __FILE__, __LINE__)
 
 #define ARRAY_LENGTH(array) (sizeof(array) / sizeof(*(array)))
 
