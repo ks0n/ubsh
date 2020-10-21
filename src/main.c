@@ -26,11 +26,14 @@ int main(void)
 
 		printf("tokens:\n");
 
-		do {
+		while (1) {
 			tok = lexer_consume(&lexer);
+			if (!tok || token_is_eof(tok))
+				break;
+
 			printf("- \"%s\", type: %i\n", token_characters(tok),
 			       token_type(tok));
-		} while (tok && !token_is_eof(tok));
+		}
 
 		puts("");
 		fclose(file);
