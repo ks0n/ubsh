@@ -11,7 +11,7 @@ static void quoting_reset(struct quoting_state *q)
 
 static bool inside_quoting(const struct quoting_state *q)
 {
-	return q->backslashed || q->singlequoted;
+	return q->backslashed || q->singlequoted || q->doublequoted;
 }
 
 int lexer_init(struct lexer *l, FILE *input)
@@ -68,6 +68,11 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 		return 0;
 	}
 
+	if (quoting->doublequoted && c == '"') {
+		quoting->doublequoted = false;
+		return 0;
+	}
+
 	if (lexer_append_char(l, c) < 0)
 		return -1;
 
@@ -84,6 +89,11 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 	if (c == '\'') {
 		quoting->singlequoted = true;
+		return 0;
+	}
+
+	if (c == '"') {
+		quoting->doublequoted = true;
 		return 0;
 	}
 
