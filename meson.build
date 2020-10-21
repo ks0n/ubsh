@@ -6,6 +6,8 @@ project('ubsh', 'c',
     'c_std=c99',
     ])
 
+add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
+
 inc = include_directories([ 'include', 'lib' ])
 
 
