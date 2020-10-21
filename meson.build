@@ -8,6 +8,8 @@ project('ubsh', 'c',
 
 add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
 
+inc = include_directories([ 'include'])
+
 src = [
   'src/prompt.c',
   'src/charstream.c',
