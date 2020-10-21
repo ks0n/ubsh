@@ -21,12 +21,13 @@ main = [
   'src/main.c',
   ]
 
-
 executable('ubsh', src, main, include_directories: inc)
 
 unit_tests_src = [
-  'tests/charstream.c'
+  'tests/charstream.c',
+  'tests/wordvec.c',
   ]
+
 criterion = dependency('criterion')
 
 unit_tests = executable('unit_tests', src, unit_tests_src, dependencies: [criterion], include_directories: inc)
