@@ -59,14 +59,6 @@ static int lexer_append_char(struct lexer *l, char c)
 }
 
 /**
- * Removes last char appended to the lexer.
- */
-static int lexer_pop_char(struct lexer *l)
-{
-	return token_pop(l->cur);
-}
-
-/**
  * Wether the lexer has delimited its latest token.
  */
 static bool lexer_has_delimited(struct lexer *l)

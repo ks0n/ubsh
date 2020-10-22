@@ -40,7 +40,7 @@ int token_append(struct token *tok, char c)
 
 int token_pop(struct token *tok)
 {
-	wordvec_pop(tok->word);
+	return wordvec_pop(tok->word);
 }
 
 bool token_is_delimited(const struct token *tok)
