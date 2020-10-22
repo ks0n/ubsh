@@ -117,3 +117,8 @@ bool token_is_operator(const struct token *tok) {
 			return false;
 	}
 }
+
+size_t token_length(const struct token *tok)
+{
+	return wordvec_len(tok->word);
+}
