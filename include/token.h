@@ -10,6 +10,7 @@ enum toktype {
 	TOKTYPE_EOF,
 
 	/* Operators */
+	TOKTYPE_OPERATOR,
 	TOKTYPE_AND_IF,
 	TOKTYPE_OR_IF,
 	TOKTYPE_DSEMI,
@@ -44,5 +45,6 @@ const char *token_characters(const struct token *tok);
 enum toktype token_type(const struct token *tok);
 
 bool token_is_eof(const struct token *tok);
+bool token_is_operator(const struct token *tok);
 
 #endif /* ! TOKEN_H */

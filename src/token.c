@@ -98,3 +98,22 @@ bool token_is_eof(const struct token *tok)
 {
 	return tok->type == TOKTYPE_EOF;
 }
+
+bool token_is_operator(const struct token *tok) {
+	switch (tok->type) {
+		case TOKTYPE_OPERATOR:
+		case TOKTYPE_AND_IF:
+		case TOKTYPE_OR_IF:
+		case TOKTYPE_DSEMI:
+		case TOKTYPE_DLESS:
+		case TOKTYPE_DGREAT:
+		case TOKTYPE_LESSAND:
+		case TOKTYPE_GREATAND:
+		case TOKTYPE_LESSGREAT:
+		case TOKTYPE_DLESSDASH:
+		case TOKTYPE_CLOBBER:
+			return true;
+		default:
+			return false;
+	}
+}

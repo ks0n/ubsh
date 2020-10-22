@@ -11,6 +11,7 @@ inc = include_directories([ 'include', 'lib' ])
 src = [
   'lib/linenoise/linenoise.c',
   'src/prompt.c',
+  'src/token_recognition.c',
   'src/charstream.c',
   'src/wordvec.c',
   'src/token.c',

@@ -6,17 +6,8 @@
 
 #include "utils.h"
 #include "wordvec.h"
+#include "token_recognition.h"
 
-struct {
-	const char *str;
-	enum toktype type;
-} operators[] = {
-	{ "&&", TOKTYPE_AND_IF },     { "||", TOKTYPE_OR_IF },
-	{ ";;", TOKTYPE_DSEMI },      { "<<", TOKTYPE_DLESS },
-	{ ">>", TOKTYPE_DGREAT },     { "<&", TOKTYPE_LESSAND },
-	{ ">&", TOKTYPE_GREATAND },   { "<>", TOKTYPE_LESSGREAT },
-	{ "<<-", TOKTYPE_DLESSDASH }, { ">|", TOKTYPE_CLOBBER },
-};
 
 static void quoting_reset(struct quoting_state *q)
 {
@@ -83,28 +74,6 @@ static bool lexer_has_delimited(struct lexer *l)
 	return token_is_delimited(l->cur);
 }
 
-/**
- * Check if current token in the lexer can form an opperator and if yes, wich
- * one. Returns TOKTYPE_UNCATEGORIZED otherwise.
- */
-static enum toktype find_operator_type(struct token *tok)
-{
-	enum toktype type = TOKTYPE_UNCATEGORIZED;
-	size_t tok_len = wordvec_len(tok->word);
-
-	if (tok_len < 1)
-		return type;
-
-	for (size_t i = 0; i < ARRAY_LENGTH(operators); i++) {
-		if (!strncmp(token_characters(tok), operators[i].str,
-			     tok_len)) {
-			type = operators[i].type;
-			break;
-		}
-	}
-
-	return type;
-}
 
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 {
@@ -117,19 +86,32 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
-	enum toktype type;
+	if (token_is_operator(l->cur)) {
+		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
+		if (can_form_operator(l->cur, c,  &possible_type))
+		{
+			lexer_append_char(l, c);
+			l->cur->type = possible_type;
 
-	if ((type = find_operator_type(l->cur)) != TOKTYPE_UNCATEGORIZED) {
-		lexer_append_char(l, c);
-		if (find_operator_type(l->cur) != TOKTYPE_UNCATEGORIZED) {
-			l->cur->type = type;
 			return 0;
 		}
-		lexer_pop_char(l);
 		lexer_delimit(l);
+
+		return 0;
 	}
+
 	if (c == '\\') {
 		quoting->backslashed = true;
+		return 0;
+	}
+
+	if (can_start_operator(c)) {
+		if (wordvec_len(l->cur->word)) {
+			lexer_delimit(l);
+		}
+
+		lexer_append_char(l,c);
+		l->cur->type = TOKTYPE_OPERATOR;
 		return 0;
 	}
 
