@@ -49,6 +49,8 @@ int wordvec_append(struct wordvec *wv, char c)
 	wv->vec[wv->len] = c;
 	wv->len += 1;
 
+	wv->vec[wv->len] = '\0';
+
 	return 0;
 }
 

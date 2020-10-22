@@ -16,13 +16,13 @@ static void quoting_reset(struct quoting_state *q)
 
 static bool inside_quoting(const struct quoting_state *q)
 {
-	return q->backslashed == true;
+	return q->backslashed || q->singlequoted || q->doublequoted;
 }
 
 int lexer_init(struct lexer *l, FILE *input)
 {
 	if (charstream_init(&l->stream, input) < 0) {
-		warnx("%s: failed to init charstream", __FUNCTION__);
+		warnx("%s: failed to init charstream", __func__);
 		return -1;
 	}
 
@@ -77,6 +77,16 @@ static bool lexer_has_delimited(struct lexer *l)
 
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 {
+	if (quoting->singlequoted && c == '\'') {
+		quoting->singlequoted = false;
+		return 0;
+	}
+
+	if (quoting->doublequoted && c == '"') {
+		quoting->doublequoted = false;
+		return 0;
+	}
+
 	if (lexer_append_char(l, c) < 0)
 		return -1;
 
@@ -86,6 +96,8 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
+  /* Returning 0 means you have finished processing the current char. */
+  
 	if (token_is_operator(l->cur)) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
 		if (can_form_operator(l->cur, c,  &possible_type))
@@ -99,12 +111,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 		return 0;
 	}
-
-	if (c == '\\') {
-		quoting->backslashed = true;
-		return 0;
-	}
-
+  
 	if (can_start_operator(c)) {
 		if (wordvec_len(l->cur->word)) {
 			lexer_delimit(l);
@@ -112,6 +119,21 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 		lexer_append_char(l,c);
 		l->cur->type = TOKTYPE_OPERATOR;
+  }
+
+  
+	if (c == '\\') {
+		quoting->backslashed = true;
+		return 0;
+	}
+    
+	if (c == '\'') {
+		quoting->singlequoted = true;
+		return 0;
+	}
+
+	if (c == '"') {
+		quoting->doublequoted = true;
 		return 0;
 	}
 
@@ -173,7 +195,7 @@ const struct token *lexer_consume(struct lexer *l)
 
 	l->cur = token_new();
 	if (!l->cur) {
-		warnx("%s: failed to create token", __FUNCTION__);
+		warnx("%s: failed to create token", __func__);
 		return NULL;
 	}
 
