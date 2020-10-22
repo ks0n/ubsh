@@ -74,7 +74,6 @@ static bool lexer_has_delimited(struct lexer *l)
 	return token_is_delimited(l->cur);
 }
 
-
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 {
 	if (quoting->singlequoted && c == '\'') {
