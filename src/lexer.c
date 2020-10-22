@@ -47,6 +47,20 @@ static void discard_line(struct lexer *l)
  */
 static void lexer_delimit(struct lexer *l)
 {
+	/* Don't create empty tokens. EOF is an exception.
+	 * https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_03
+	 * 'If it is indicated that a token is delimited, and no characters
+	 *  have been included in a token, processing shall continue until an
+	 *  actual token is delimited.'
+	 */
+	if (token_length(l->cur) == 0)
+		return;
+
+	token_delimit(l->cur);
+}
+
+static void lexer_delimit_eof(struct lexer *l)
+{
 	token_delimit(l->cur);
 }
 
@@ -164,7 +178,7 @@ static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 		quoting->backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
-		lexer_delimit(l);
+		lexer_delimit_eof(l);
 		return 0;
 	}
 
