@@ -12,6 +12,7 @@ inc = include_directories([ 'include'])
 
 src = [
   'src/prompt.c',
+  'src/token_recognition.c',
   'src/charstream.c',
   'src/wordvec.c',
   'src/token.c',

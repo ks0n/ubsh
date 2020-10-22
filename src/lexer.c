@@ -4,6 +4,11 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "utils.h"
+#include "wordvec.h"
+#include "token_recognition.h"
+
+
 static void quoting_reset(struct quoting_state *q)
 {
 	memset(q, 0, sizeof(*q));
@@ -54,6 +59,14 @@ static int lexer_append_char(struct lexer *l, char c)
 }
 
 /**
+ * Removes last char appended to the lexer.
+ */
+static int lexer_pop_char(struct lexer *l)
+{
+	return token_pop(l->cur);
+}
+
+/**
  * Wether the lexer has delimited its latest token.
  */
 static bool lexer_has_delimited(struct lexer *l)
@@ -82,11 +95,37 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
+  /* Returning 0 means you have finished processing the current char. */
+  
+	if (token_is_operator(l->cur)) {
+		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
+		if (can_form_operator(l->cur, c,  &possible_type))
+		{
+			lexer_append_char(l, c);
+			l->cur->type = possible_type;
+
+			return 0;
+		}
+		lexer_delimit(l);
+
+		return 0;
+	}
+  
+	if (can_start_operator(c)) {
+		if (wordvec_len(l->cur->word)) {
+			lexer_delimit(l);
+		}
+
+		lexer_append_char(l,c);
+		l->cur->type = TOKTYPE_OPERATOR;
+  }
+
+  
 	if (c == '\\') {
 		quoting->backslashed = true;
 		return 0;
 	}
-
+    
 	if (c == '\'') {
 		quoting->singlequoted = true;
 		return 0;

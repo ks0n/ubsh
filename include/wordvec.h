@@ -15,6 +15,7 @@ struct wordvec *wordvec_new(void);
 void wordvec_del(struct wordvec *wv);
 
 int wordvec_append(struct wordvec *wv, char c);
+int wordvec_pop(struct wordvec *wv);
 
 static inline const char *wordvec_chars(const struct wordvec *wv)
 {
