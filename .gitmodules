@@ -1,3 +1,0 @@
-[submodule "lib/linenoise"]
-	path = lib/linenoise
-	url = https://github.com/ks0n/linenoise

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "linenoise/linenoise.h"
+#include <readline/readline.h>
 
 #include "prompt.h"
 #include "charstream.h"
@@ -13,7 +13,7 @@ int main(void)
 	char *line = NULL;
 	size_t line_len;
 
-	while ((line = linenoise(prompt_get()))) {
+	while ((line = readline(prompt_get()))) {
 		line_len = strlen(line);
 
 		if (!line || !line_len)
@@ -26,17 +26,20 @@ int main(void)
 
 		printf("tokens:\n");
 
-		do {
+		while (1) {
 			tok = lexer_consume(&lexer);
+			if (!tok || token_is_eof(tok))
+				break;
+
 			printf("- \"%s\", type: %i\n", token_characters(tok),
 			       token_type(tok));
-		} while (tok && !token_is_eof(tok));
+		}
 
 		puts("");
 		fclose(file);
 
 		lexer_cleanup(&lexer);
-		linenoiseFree(line);
+		free(line);
 	}
 
 	return 0;
