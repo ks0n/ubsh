@@ -40,7 +40,7 @@ int token_append(struct token *tok, char c)
 
 int token_pop(struct token *tok)
 {
-	wordvec_pop(tok->word);
+	return wordvec_pop(tok->word);
 }
 
 bool token_is_delimited(const struct token *tok)
@@ -52,7 +52,7 @@ static bool token_eof_check(struct token *tok)
 {
 	return wordvec_len(tok->word) == 0;
 }
-static bool token_word_check(struct token *tok)
+static bool token_word_check(UNUSED struct token *tok)
 {
 	return true;
 }
