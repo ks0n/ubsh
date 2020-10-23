@@ -23,6 +23,7 @@ jobs:
           sudo apt-get update
           sudo apt install meson ninja-build criterion-dev
           sudo apt install --reinstall libreadline-dev
+          pkg-config --cflags readline
           meson build
           ninja -C build
 
