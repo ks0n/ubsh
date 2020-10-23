@@ -8,7 +8,7 @@ project('ubsh', 'c',
 
 add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
 
-inc = include_directories([ 'include'])
+inc = include_directories(['include'])
 
 src = [
   'src/prompt.c',
@@ -31,7 +31,10 @@ unit_tests_src = [
   'tests/wordvec.c',
   ]
 
-criterion = dependency('criterion')
-unit_tests = executable('unit_tests', src, unit_tests_src, dependencies: [criterion], include_directories: inc)
-
-test('Unit tests', unit_tests)
+if get_option('enable_tests')
+  criterion = dependency('criterion', required: false)
+  unit_tests = executable('unit_tests', src, unit_tests_src, dependencies: [criterion], include_directories: inc, override_options: ['b_coverage=true'])
+  test('Unit tests', unit_tests)
+else
+  warning('Tests are disabled. Run ``meson -Denable_tests=true``')
+endif

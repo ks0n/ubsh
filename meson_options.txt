@@ -1,0 +1,11 @@
+option('enable_tests',
+  type: 'boolean',
+  value: false,
+  description: 'Build and run tests'
+  )
+
+# option('debug',
+#   type: 'boolean',
+#   value: false,
+#   description: 'Create a debug build'
+#   )
