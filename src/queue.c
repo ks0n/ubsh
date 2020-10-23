@@ -48,6 +48,14 @@ void *queue_peek(struct queue *q)
 	return q->tail->data;
 }
 
+void *queue_peek_head(struct queue *q)
+{
+	if (queue_is_empty(q))
+		return NULL;
+
+	return q->head->data;
+}
+
 void *queue_pop(struct queue *q)
 {
 	struct queue_node *tail_node;

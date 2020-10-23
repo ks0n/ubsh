@@ -21,8 +21,13 @@ size_t queue_len(const struct queue *q);
 bool queue_is_empty(const struct queue *q);
 
 int queue_push(struct queue *q, void *data);
-void *queue_peek(struct queue *q);
 void *queue_pop(struct queue *q);
 void *queue_at(struct queue *q, size_t idx);
+
+/* Peek element inserted the longest time ago. */
+void *queue_peek(struct queue *q);
+
+/* Peek element inserted the most recently. */
+void *queue_peek_head(struct queue *q);
 
 #endif /* ! QUEUE_H */
