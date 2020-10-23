@@ -30,7 +30,7 @@ Test(lexer, just_spaces)
 
 Test(lexer, one_word)
 {
-	struct lexer l = open_lexer("iamawork");
+	struct lexer l = open_lexer("iamatwork");
 	const struct token *tok;
 
 	tok = lexer_consume(&l);
