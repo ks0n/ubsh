@@ -17,6 +17,7 @@ src = [
   'src/wordvec.c',
   'src/token.c',
   'src/lexer.c',
+  'src/queue.c',
   ]
 
 main = [
@@ -29,6 +30,7 @@ executable('ubsh', src, main, dependencies: [readline], include_directories: inc
 unit_tests_src = [
   'tests/charstream.c',
   'tests/wordvec.c',
+  'tests/queue.c',
   ]
 
 if get_option('enable_tests')
