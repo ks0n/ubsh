@@ -26,7 +26,7 @@ int lexer_init(struct lexer *l, FILE *input)
 		return -1;
 	}
 
-	l->cur = NULL;
+	queue_init(&l->tokens);
 
 	return 0;
 }
@@ -38,6 +38,19 @@ static void discard_line(struct lexer *l)
 	do {
 		c = charstream_read(&l->stream);
 	} while (c != CHARSTREAM_EOF && c != '\n');
+}
+
+static void __lexer_delimit(struct lexer *l)
+{
+	struct token *new;
+
+	token_delimit(lexer_cur(l));
+
+	/* TODO: looks like I'm fucked if malloc fails.
+	 * (we just need xmalloc)
+	 */
+	new = token_new();
+	queue_push(&l->tokens, new);
 }
 
 /**
@@ -53,15 +66,15 @@ static void lexer_delimit(struct lexer *l)
 	 *  have been included in a token, processing shall continue until an
 	 *  actual token is delimited.'
 	 */
-	if (token_length(l->cur) == 0)
+	if (token_length(lexer_cur(l)) == 0)
 		return;
 
-	token_delimit(l->cur);
+	__lexer_delimit(l);
 }
 
 static void lexer_delimit_eof(struct lexer *l)
 {
-	token_delimit(l->cur);
+	__lexer_delimit(l);
 }
 
 /**
@@ -69,7 +82,9 @@ static void lexer_delimit_eof(struct lexer *l)
  */
 static int lexer_append_char(struct lexer *l, char c)
 {
-	return token_append(l->cur, c);
+	struct token *cur = lexer_cur(l);
+
+	return token_append(cur, c);
 }
 
 /**
@@ -77,7 +92,13 @@ static int lexer_append_char(struct lexer *l, char c)
  */
 static bool lexer_has_delimited(struct lexer *l)
 {
-	return token_is_delimited(l->cur);
+	/* struct token *cur = lexer_cur(l); */
+	struct token *cur = queue_peek(&l->tokens);
+
+	if (!cur)
+		return false;
+
+	return token_is_delimited(cur);
 }
 
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
@@ -103,12 +124,12 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 {
   /* Returning 0 means you have finished processing the current char. */
   
-	if (token_is_operator(l->cur)) {
+	if (token_is_operator(lexer_cur(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
-		if (can_form_operator(l->cur, c,  &possible_type))
+		if (can_form_operator(lexer_cur(l), c,  &possible_type))
 		{
 			lexer_append_char(l, c);
-			l->cur->type = possible_type;
+			lexer_cur(l)->type = possible_type;
 
 			return 0;
 		}
@@ -118,12 +139,10 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 	}
   
 	if (can_start_operator(c)) {
-		if (wordvec_len(l->cur->word)) {
-			lexer_delimit(l);
-		}
+		lexer_delimit(l);
 
-		lexer_append_char(l,c);
-		l->cur->type = TOKTYPE_OPERATOR;
+		lexer_cur(l)->type = TOKTYPE_OPERATOR;
+		/* Fallthrough to last case lexer_append. */
   }
 
   
@@ -195,20 +214,21 @@ const struct token *lexer_consume(struct lexer *l)
 	struct quoting_state quoting;
 	quoting_reset(&quoting);
 
-	if (l->cur)
-		token_del(l->cur);
+	if (!queue_is_empty(&l->tokens)) {
+		struct token *tok = queue_pop(&l->tokens);
+		token_del(tok);
+	}
 
-	l->cur = token_new();
-	if (!l->cur) {
-		warnx("%s: failed to create token", __func__);
-		return NULL;
+	if (queue_is_empty(&l->tokens)) {
+		struct token *tok = token_new();
+		queue_push(&l->tokens, tok);
 	}
 
 	while (!lexer_has_delimited(l)) {
 		lexer_consume_char(l, &quoting);
 	}
 
-	return l->cur;
+	return lexer_cur(l);
 }
 
 /**
@@ -216,6 +236,10 @@ const struct token *lexer_consume(struct lexer *l)
  */
 void lexer_cleanup(struct lexer *l)
 {
-	if (l->cur)
-		token_del(l->cur);
+	struct token *tok;
+	while (!queue_is_empty(&l->tokens)) {
+		tok = queue_pop(&l->tokens);
+
+		token_del(tok);
+	}
 }

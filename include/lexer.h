@@ -5,6 +5,7 @@
 
 #include "charstream.h"
 #include "token.h"
+#include "queue.h"
 
 struct quoting_state {
 	bool backslashed;
@@ -15,7 +16,7 @@ struct quoting_state {
 struct lexer {
 	struct charstream stream;
 
-	struct token *cur;
+	struct queue tokens;
 };
 
 int lexer_init(struct lexer *l, FILE *input);
@@ -28,5 +29,14 @@ void lexer_cleanup(struct lexer *l);
  * @return token read by the lexer (the token is owned by the lexer)
  */
 const struct token *lexer_consume(struct lexer *l);
+
+/**
+ * Return the token currently being edited by the lexer.
+ */
+inline static struct token *lexer_cur(struct lexer *l)
+{
+	return queue_peek_head(&l->tokens);
+}
+
 
 #endif /* ! LEXER_H */
