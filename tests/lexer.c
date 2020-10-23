@@ -103,3 +103,146 @@ Test(lexer, backquoted_backquote)
 
 	close_lexer(&l);
 }
+
+Test(lexer, doublequoted_three_words)
+{
+	struct lexer l = open_lexer("\"one two three\"");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "one two three");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, singlequotes_inside_doublequotes)
+{
+	struct lexer l = open_lexer("\"'one two three'\"");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "'one two three'");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, half_commented_line)
+{
+	struct lexer l = open_lexer("i am #a line");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "i");
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "am");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, backquoted_comment)
+{
+	struct lexer l = open_lexer("i am \\#a line");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "i");
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "am");
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "#a");
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "line");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, doublequoted_comment)
+{
+	struct lexer l = open_lexer("\"i am #a line\"");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "i am #a line");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, backquoted_comment_inside_doublequotes)
+{
+	struct lexer l = open_lexer("\"i am \\#a line\"");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "i am \\#a line");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, op_or_if)
+{
+	struct lexer l = open_lexer("a || b");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "a");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "||");
+	cr_assert_eq(token_type(tok), TOKTYPE_OR_IF);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "b");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+/* Test(lexer, unfinished_dless) */
+int main()
+{
+	struct lexer l = open_lexer("ta<mer");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "ta");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "<");
+	cr_assert_eq(token_type(tok), TOKTYPE_OPERATOR);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "mer");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
