@@ -21,7 +21,8 @@ jobs:
         run: |
           sudo add-apt-repository ppa:snaipewastaken/ppa
           sudo apt-get update
-          sudo apt install meson ninja-build criterion-dev libreadline-dev
+          sudo apt install meson ninja-build criterion-dev
+          sudo apt install --reinstall libreadline-dev
           meson build
           ninja -C build
 
