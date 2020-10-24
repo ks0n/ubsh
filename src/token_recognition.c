@@ -16,7 +16,8 @@ struct {
 	{ "<<-", TOKTYPE_DLESSDASH }, { ">|", TOKTYPE_CLOBBER },
 };
 
-bool can_start_operator(char c) {
+bool can_start_operator(char c)
+{
 	for (size_t i = 0; i < ARRAY_LENGTH(operators); i++) {
 		if (operators[i].str[0] == c)
 			return true;

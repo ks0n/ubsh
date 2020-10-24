@@ -8,7 +8,6 @@
 #include "wordvec.h"
 #include "token_recognition.h"
 
-
 static void quoting_reset(struct quoting_state *q)
 {
 	memset(q, 0, sizeof(*q));
@@ -121,12 +120,11 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
-  /* Returning 0 means you have finished processing the current char. */
+	/* Returning 0 means you have finished processing the current char. */
 
 	if (token_is_operator(lexer_last(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
-		if (can_form_operator(lexer_last(l), c,  &possible_type))
-		{
+		if (can_form_operator(lexer_last(l), c, &possible_type)) {
 			lexer_append_char(l, c);
 			lexer_last(l)->type = possible_type;
 
@@ -142,8 +140,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 		lexer_last(l)->type = TOKTYPE_OPERATOR;
 		/* Fallthrough to last case lexer_append_char. */
-  }
-
+	}
 
 	if (c == '\\') {
 		quoting->backslashed = true;
