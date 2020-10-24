@@ -13,29 +13,29 @@
  * Logging levels available
  */
 typedef enum {
-    LOG_INFO = 0,
-    LOG_WARN,
-    LOG_ERR,
-    LOG_FATAL_ERR,
+	LOG_INFO = 0,
+	LOG_WARN,
+	LOG_ERR,
+	LOG_FATAL_ERR,
 } log_level;
 
-#define __INNER_PRINT_ARGS(...) \
-    do { \
-        fprintf(stderr, __VA_ARGS__); \
-        fprintf(stderr, "\n"); \
-    } while (0)
+#define __INNER_PRINT_ARGS(...)                                                \
+	do {                                                                   \
+		fprintf(stderr, __VA_ARGS__);                                  \
+		fprintf(stderr, "\n");                                         \
+	} while (0)
 
 /* Logging doesn't need to show on release builds */
 #ifdef NDEBUG
 /**
  * Only log errors and fatal errors in release mode
  */
-#define LOG(__LEVEL, ...) \
-    do { \
-       if (__LEVEL >= LOG_ERR) \
-            if (print_level(__LEVEL) == 0) \
-                __INNER_PRINT_ARGS(__VA_ARGS__); \
-    } while (0)
+#define LOG(__LEVEL, ...)                                                      \
+	do {                                                                   \
+		if (__LEVEL >= LOG_ERR)                                        \
+			if (print_level(__LEVEL) == 0)                         \
+				__INNER_PRINT_ARGS(__VA_ARGS__);               \
+	} while (0)
 #else
 /**
  * Simple Logging macro. Pass a level and a formatting string
@@ -49,13 +49,13 @@ typedef enum {
  * LOG(LOG_WARN, "This is a warning");
  * ```
  */
-#define LOG(__LEVEL, ...) \
-    do { \
-        if (print_level(__LEVEL) == 0) \
-            __INNER_PRINT_ARGS(__VA_ARGS__); \
-        if (__LEVEL == LOG_FATAL_ERR) \
-            errx(LOG_EXIT_CODE, NULL); \
-    } while (0)
+#define LOG(__LEVEL, ...)                                                      \
+	do {                                                                   \
+		if (print_level(__LEVEL) == 0)                                 \
+			__INNER_PRINT_ARGS(__VA_ARGS__);                       \
+		if (__LEVEL == LOG_FATAL_ERR)                                  \
+			errx(LOG_EXIT_CODE, NULL);                             \
+	} while (0)
 #endif
 
 /**
@@ -65,23 +65,23 @@ typedef enum {
  */
 static inline int print_level(log_level level)
 {
-    switch (level) {
-    case LOG_INFO:
-        fprintf(stderr, BLUE("INFO")": ");
-        return 0;
-    case LOG_WARN:
-        fprintf(stderr, YELLOW("WARN")": ");
-        return 0;
-    case LOG_ERR:
-        fprintf(stderr, RED("ERROR")": ");
-        return 0;
-    case LOG_FATAL_ERR:
-        fprintf(stderr, RED_HI("FATAL ERROR")": ");
-        return 0;
-    default:
-        LOG(LOG_ERR, "UNKNOWN LOG LEVEL");
-        return -1;
-    }
+	switch (level) {
+	case LOG_INFO:
+		fprintf(stderr, BLUE("INFO") ": ");
+		return 0;
+	case LOG_WARN:
+		fprintf(stderr, YELLOW("WARN") ": ");
+		return 0;
+	case LOG_ERR:
+		fprintf(stderr, RED("ERROR") ": ");
+		return 0;
+	case LOG_FATAL_ERR:
+		fprintf(stderr, RED_HI("FATAL ERROR") ": ");
+		return 0;
+	default:
+		LOG(LOG_ERR, "UNKNOWN LOG LEVEL");
+		return -1;
+	}
 }
 
 #endif /* ! LOGGER_H */

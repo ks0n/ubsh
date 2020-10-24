@@ -13,9 +13,9 @@ int main(void)
 {
 	char *line = NULL;
 	size_t line_len;
-    LOG(LOG_INFO, "ubsh started");
-    LOG(LOG_WARN, "ubsh is not a true shell yet!");
-    LOG(LOG_ERR, "we're using readline");
+	LOG(LOG_INFO, "ubsh started");
+	LOG(LOG_WARN, "ubsh is not a true shell yet!");
+	LOG(LOG_ERR, "we're using readline");
 
 	while ((line = readline(prompt_get()))) {
 		line_len = strlen(line);
@@ -35,8 +35,8 @@ int main(void)
 			if (!tok || token_is_eof(tok))
 				break;
 
-			LOG(LOG_INFO, "- \"%s\", type: %i", token_characters(tok),
-			       token_type(tok));
+			LOG(LOG_INFO, "- \"%s\", type: %i",
+			    token_characters(tok), token_type(tok));
 		}
 
 		puts("");
