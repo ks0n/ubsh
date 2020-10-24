@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: alexisehret/archlinux_c_meson:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -19,14 +21,14 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
-          sudo add-apt-repository ppa:snaipewastaken/ppa
-          sudo apt-get update
-          sudo apt install meson ninja-build criterion-dev libreadline-dev
+          yay criterion
           meson build
           ninja -C build
 
   tests:
     runs-on: ubuntu-latest
+    container:
+      image: alexisehret/archlinux_c_meson:latest
     needs: build
 
     steps:
@@ -35,8 +37,6 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
-          sudo add-apt-repository ppa:snaipewastaken/ppa
-          sudo apt-get update
-          sudo apt install meson ninja-build criterion-dev
+          yay criterion
           meson build
           ninja -C build test
