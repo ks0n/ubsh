@@ -17,12 +17,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - name: Install packages 
+      - name: Install dependencies
         run: |
-          sudo add-apt-repository ppa:snaipewastaken/ppa
           sudo apt update
-          sudo apt install meson ninja-build criterion-dev libreadline-dev
-          # sudo apt install --reinstall libreadline-dev
+          sudo apt install meson ninja-build libreadline-dev
           echo "PKG_CONFIG_PATH = $PKG_CONFIG_PATH"
           pkg-config --cflags readline
 
