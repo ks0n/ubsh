@@ -21,9 +21,9 @@ jobs:
         run: |
           sudo add-apt-repository ppa:snaipewastaken/ppa
           sudo apt update
-          sudo apt upgrade
           sudo apt install meson ninja-build criterion-dev libreadline-dev
           # sudo apt install --reinstall libreadline-dev
+          echo "PKG_CONFIG_PATH = $PKG_CONFIG_PATH"
           pkg-config --cflags readline
 
       - name: Build ubsh
