@@ -36,11 +36,8 @@ struct ast_node {
 	enum ast_type type;
 };
 
-/* Functions to define to create a new AST "class" */
-
 /**
- *
- *
+ * Function prototypes for the AST "class" to create a new inherited "class"
  */
 typedef struct ast_node *(*ast_node_new_f)(void);
 typedef void (*ast_node_del_f)(struct ast_node *);
