@@ -30,11 +30,11 @@ Test(lexer, just_spaces)
 
 Test(lexer, one_word)
 {
-	struct lexer l = open_lexer("iamatwork");
+	struct lexer l = open_lexer("iamaword");
 	const struct token *tok;
 
 	tok = lexer_consume(&l);
-	cr_assert_str_eq(token_characters(tok), "iamawork");
+	cr_assert_str_eq(token_characters(tok), "iamaword");
 
 	tok = lexer_consume(&l);
 	cr_assert(token_is_eof(tok));
