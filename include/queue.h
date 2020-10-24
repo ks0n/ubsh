@@ -11,8 +11,8 @@ struct queue_node {
 };
 
 struct queue {
-	struct queue_node *head;
-	struct queue_node *tail;
+	struct queue_node *first;
+	struct queue_node *last;
 	size_t len;
 };
 
@@ -24,10 +24,10 @@ int queue_push(struct queue *q, void *data);
 void *queue_pop(struct queue *q);
 void *queue_at(struct queue *q, size_t idx);
 
-/* Peek element inserted the longest time ago. */
-void *queue_peek(struct queue *q);
+/* Peek the element that will be popped first. */
+void *queue_peek_first(struct queue *q);
 
-/* Peek element inserted the most recently. */
-void *queue_peek_head(struct queue *q);
+/* Peek the element that will be popped last . */
+void *queue_peek_last(struct queue *q);
 
 #endif /* ! QUEUE_H */

@@ -50,16 +50,16 @@ Test(queue, push_elements_and_peek_them)
 	queue_push(&q, (void*)2);
 	queue_push(&q, (void*)3);
 
-	cr_assert_eq(queue_peek(&q), (void*)0);
+	cr_assert_eq(queue_peek_first(&q), (void*)0);
 	queue_pop(&q);
 
-	cr_assert_eq(queue_peek(&q), (void*)1);
+	cr_assert_eq(queue_peek_first(&q), (void*)1);
 	queue_pop(&q);
 
-	cr_assert_eq(queue_peek(&q), (void*)2);
+	cr_assert_eq(queue_peek_first(&q), (void*)2);
 	queue_pop(&q);
 
-	cr_assert_eq(queue_peek(&q), (void*)3);
+	cr_assert_eq(queue_peek_first(&q), (void*)3);
 	queue_pop(&q);
 }
 
@@ -69,19 +69,19 @@ Test(queue, push_peek_pop_4_times)
 	queue_init(&q);
 
 	queue_push(&q, (void*)0);
-	cr_assert_eq(queue_peek(&q), (void*)0);
+	cr_assert_eq(queue_peek_first(&q), (void*)0);
 	queue_pop(&q);
 
 	queue_push(&q, (void*)1);
-	cr_assert_eq(queue_peek(&q), (void*)1);
+	cr_assert_eq(queue_peek_first(&q), (void*)1);
 	queue_pop(&q);
 
 	queue_push(&q, (void*)2);
-	cr_assert_eq(queue_peek(&q), (void*)2);
+	cr_assert_eq(queue_peek_first(&q), (void*)2);
 	queue_pop(&q);
 
 	queue_push(&q, (void*)3);
-	cr_assert_eq(queue_peek(&q), (void*)3);
+	cr_assert_eq(queue_peek_first(&q), (void*)3);
 	queue_pop(&q);
 }
 
@@ -114,5 +114,6 @@ Test(queue, peek_empty)
 	struct queue q;
 	queue_init(&q);
 
-	cr_assert_null(queue_peek(&q));
+	cr_assert_null(queue_peek_first(&q));
+	cr_assert_null(queue_peek_last(&q));
 }

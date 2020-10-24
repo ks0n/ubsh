@@ -2,8 +2,8 @@
 
 void queue_init(struct queue *q)
 {
-	q->head = NULL;
-	q->tail = NULL;
+	q->last = NULL;
+	q->first = NULL;
 	q->len = 0;
 }
 
@@ -25,55 +25,55 @@ int queue_push(struct queue *q, void *data)
 
 	node->data = data;
 	node->prev = NULL;
-	node->next = q->head;
+	node->next = q->last;
 
 	if (node->next)
 		node->next->prev = node;
 
-	q->head = node;
+	q->last = node;
 
 	if (queue_is_empty(q))
-		q->tail = node;
+		q->first = node;
 
 	q->len++;
 
 	return 0;
 }
 
-void *queue_peek(struct queue *q)
+void *queue_peek_first(struct queue *q)
 {
 	if (queue_is_empty(q))
 		return NULL;
 
-	return q->tail->data;
+	return q->first->data;
 }
 
-void *queue_peek_head(struct queue *q)
+void *queue_peek_last(struct queue *q)
 {
 	if (queue_is_empty(q))
 		return NULL;
 
-	return q->head->data;
+	return q->last->data;
 }
 
 void *queue_pop(struct queue *q)
 {
-	struct queue_node *tail_node;
+	struct queue_node *first_node;
 	void *data;
 
 	if (queue_is_empty(q))
 		return NULL;
 
-	tail_node = q->tail;
-	data = tail_node->data;
+	first_node = q->first;
+	data = first_node->data;
 
-	q->tail = q->tail->prev;
+	q->first = q->first->prev;
 	q->len--;
 
 	if (queue_is_empty(q))
-		q->head = NULL;
+		q->last = NULL;
 
-	free(tail_node);
+	free(first_node);
 
 	return data;
 }
@@ -85,7 +85,7 @@ void *queue_at(struct queue *q, size_t idx)
 	if (idx >= queue_len(q))
 		return NULL;
 
-	node = q->tail;
+	node = q->first;
 
 	for (size_t i = 0; i < idx; i++)
 		node = node->prev;
