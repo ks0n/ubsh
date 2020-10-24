@@ -21,14 +21,18 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
-          yay criterion
+          git clone https://aur.archlinux.org/yay-bin.git
+          cd yay-bin
+          makepkg -si
+          cd ..
+          yay -S criterion
           meson build
           ninja -C build
 
   tests:
     runs-on: ubuntu-latest
     container:
-      image: alexisehret/archlinux_c_meson:latest
+      image: alexisehret/archlinux_c_unittest:latest
     needs: build
 
     steps:
@@ -37,6 +41,10 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
-          yay criterion
+          git clone https://aur.archlinux.org/yay-bin.git
+          cd yay-bin
+          makepkg -si
+          cd ..
+          yay -S criterion
           meson build
           ninja -C build test
