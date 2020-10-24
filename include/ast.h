@@ -5,21 +5,21 @@
  * All possible types of nodes for the AST
  */
 enum ast_type {
-    AST_NONE = 0,
-    AST_VALUE,
-    AST_TYPE_LEN, // Amount of types declared for the AST
+	AST_NONE = 0,
+	AST_VALUE,
+	AST_TYPE_LEN, // Amount of types declared for the AST
 };
 
 /**
  * Return values for AST functions returning an integer
  */
 enum ast_state {
-    AST_ERR,
-    AST_INVALID_LEN,
-    AST_INVALID_TYPE,
-    AST_UNIMPLEMENTED,
-    AST_NULL_PTR,
-    AST_OK = 0,
+	AST_ERR,
+	AST_INVALID_LEN,
+	AST_INVALID_TYPE,
+	AST_UNIMPLEMENTED,
+	AST_NULL_PTR,
+	AST_OK = 0,
 };
 
 /**
@@ -33,18 +33,18 @@ enum ast_state {
  * particular type
  */
 struct ast_node {
-    enum ast_type type;
+	enum ast_type type;
 };
 
 /* Functions to define to create a new AST "class" */
-typedef struct ast_node * (* ast_node_new_f)(void);
-typedef void (* ast_node_del_f)(struct ast_node *);
+typedef struct ast_node *(*ast_node_new_f)(void);
+typedef void (*ast_node_del_f)(struct ast_node *);
 
 /**
  * "Upcast" an AST node to its base type, ast_node. This is just a wrapper to avoid
  * typing the cast all the time
  */
-#define UPCAST(__NODE) ((struct ast_node *) __NODE)
+#define UPCAST(__NODE) ((struct ast_node *)__NODE)
 
 /**
  * Wrapper to avoid writing the type to define a new AST constructor
