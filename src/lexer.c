@@ -122,7 +122,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
   /* Returning 0 means you have finished processing the current char. */
-  
+
 	if (token_is_operator(lexer_last(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
 		if (can_form_operator(lexer_last(l), c,  &possible_type))
@@ -136,7 +136,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 		/* Fallthrough to last case lexer_append_char. */
 	}
-  
+
 	if (can_start_operator(c)) {
 		lexer_delimit(l);
 
@@ -144,12 +144,12 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 		/* Fallthrough to last case lexer_append_char. */
   }
 
-  
+
 	if (c == '\\') {
 		quoting->backslashed = true;
 		return 0;
 	}
-    
+
 	if (c == '\'') {
 		quoting->singlequoted = true;
 		return 0;
@@ -208,20 +208,36 @@ static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 	return 0;
 }
 
+static void pop_lexer_first_if_delimited(struct lexer *l)
+{
+	struct token *tok;
+
+	if (!queue_is_empty(&l->tokens) && token_is_delimited(lexer_first(l))) {
+		tok = queue_pop(&l->tokens);
+		token_del(tok);
+	}
+}
+
+static void add_token_if_none_present(struct lexer *l)
+{
+	if (queue_is_empty(&l->tokens)) {
+		struct token *tok = token_new();
+		queue_push(&l->tokens, tok);
+	}
+}
+
+static void setup_lexer(struct lexer *l)
+{
+	pop_lexer_first_if_delimited(l);
+	add_token_if_none_present(l);
+}
+
 const struct token *lexer_consume(struct lexer *l)
 {
 	struct quoting_state quoting;
 	quoting_reset(&quoting);
 
-	if (!queue_is_empty(&l->tokens) && token_is_delimited(lexer_first(l))) {
-		struct token *tok = queue_pop(&l->tokens);
-		token_del(tok);
-	}
-
-	if (queue_is_empty(&l->tokens)) {
-		struct token *tok = token_new();
-		queue_push(&l->tokens, tok);
-	}
+	setup_lexer(l);
 
 	while (!lexer_has_delimited(l)) {
 		lexer_consume_char(l, &quoting);
