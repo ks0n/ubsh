@@ -245,3 +245,34 @@ Test(lexer, unfinished_dless)
 
 	close_lexer(&l);
 }
+
+Test(lexer, two_commands_seperated_by_newline)
+{
+	struct lexer l = open_lexer("ls\n'cd dir'");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "ls");
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "cd dir");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
+
+Test(lexer, backquoted_newline)
+{
+	struct lexer l = open_lexer("ls\\\necho'");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "ls\necho");
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}
