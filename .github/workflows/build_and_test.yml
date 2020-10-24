@@ -21,8 +21,15 @@ jobs:
         run: |
           sudo apt update
           sudo apt install meson ninja-build libreadline-dev
-          echo "PKG_CONFIG_PATH = $PKG_CONFIG_PATH"
-          pkg-config --cflags readline
+          wget 'https://github.com/Snaipe/Criterion/archive/v2.3.3.tar.gz'
+          tar -xf 'v2.3.3.tar.gz'
+          cd 'Criterion-2.3.3'
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build .
+          make install
+
 
       - name: Build ubsh
         run: |
