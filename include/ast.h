@@ -11,6 +11,18 @@ enum ast_type {
 };
 
 /**
+ * Return values for AST functions returning an integer
+ */
+enum ast_state {
+    AST_ERR,
+    AST_INVALID_LEN,
+    AST_INVALID_TYPE,
+    AST_UNIMPLEMENTED,
+    AST_NULL_PTR,
+    AST_OK = 0,
+};
+
+/**
  * Base structure to derive to create new AST nodes. That struct must always be 
  * aggregated in the derived struct, and not as a pointer. It must always be declared as
  * the FIRST member of that derived struct.
@@ -32,7 +44,7 @@ typedef void (* ast_node_del_f)(struct ast_node *);
  * "Upcast" an AST node to its base type, ast_node. This is just a wrapper to avoid
  * typing the cast all the time
  */
-#define UPCAST(__NODE) (struct ast_node *) __NODE
+#define UPCAST(__NODE) ((struct ast_node *) __NODE)
 
 /**
  * Wrapper to avoid writing the type to define a new AST constructor
@@ -58,7 +70,9 @@ struct ast_node *ast_node_new(enum ast_type type);
  *
  * @param node AST Node to free
  * @param type Type of the AST node to free
+ *
+ * @return AST_OK on success, a negative value form @ast_state on error
  */
-void ast_node_del(struct ast_node *node, enum ast_type type);
+int ast_node_del(struct ast_node *node, enum ast_type type);
 
 #endif /* ! AST_H */
