@@ -21,6 +21,7 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
+          pacman -S sudo
           git clone https://aur.archlinux.org/yay-bin.git
           cd yay-bin
           sudo -u nobody 'makepkg -si'
@@ -41,6 +42,7 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
+          pacman -S sudo
           git clone https://aur.archlinux.org/yay-bin.git
           cd yay-bin
           sudo -u nobody 'makepkg -si'
