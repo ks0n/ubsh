@@ -31,11 +31,20 @@ void lexer_cleanup(struct lexer *l);
 const struct token *lexer_consume(struct lexer *l);
 
 /**
- * Return the token currently being edited by the lexer.
+ * Return the token that will come out first of the lexer.
  */
-inline static struct token *lexer_cur(struct lexer *l)
+inline static struct token *lexer_first(struct lexer *l)
 {
-	return queue_peek_head(&l->tokens);
+	return queue_peek_first(&l->tokens);
+}
+
+/**
+ * Return the token that will come out last of the lexer.
+ * Also the token the lexer is currently editing.
+ */
+inline static struct token *lexer_last(struct lexer *l)
+{
+	return queue_peek_last(&l->tokens);
 }
 
 

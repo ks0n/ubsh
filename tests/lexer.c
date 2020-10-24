@@ -223,26 +223,25 @@ Test(lexer, op_or_if)
 	close_lexer(&l);
 }
 
-/* #<{(| Test(lexer, unfinished_dless) |)}># */
-/* int main() */
-/* { */
-/* 	struct lexer l = open_lexer("ta<mer"); */
-/* 	const struct token *tok; */
-/*  */
-/* 	tok = lexer_consume(&l); */
-/* 	cr_assert_str_eq(token_characters(tok), "ta"); */
-/* 	cr_assert_eq(token_type(tok), TOKTYPE_WORD); */
-/*  */
-/* 	tok = lexer_consume(&l); */
-/* 	cr_assert_str_eq(token_characters(tok), "<"); */
-/* 	cr_assert_eq(token_type(tok), TOKTYPE_OPERATOR); */
-/*  */
-/* 	tok = lexer_consume(&l); */
-/* 	cr_assert_str_eq(token_characters(tok), "mer"); */
-/* 	cr_assert_eq(token_type(tok), TOKTYPE_WORD); */
-/*  */
-/* 	tok = lexer_consume(&l); */
-/* 	cr_assert(token_is_eof(tok)); */
-/*  */
-/* 	close_lexer(&l); */
-/* } */
+Test(lexer, unfinished_dless)
+{
+	struct lexer l = open_lexer("ta<mer");
+	const struct token *tok;
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "ta");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "<");
+	cr_assert_eq(token_type(tok), TOKTYPE_OPERATOR);
+
+	tok = lexer_consume(&l);
+	cr_assert_str_eq(token_characters(tok), "mer");
+	cr_assert_eq(token_type(tok), TOKTYPE_WORD);
+
+	tok = lexer_consume(&l);
+	cr_assert(token_is_eof(tok));
+
+	close_lexer(&l);
+}

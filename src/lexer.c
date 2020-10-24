@@ -44,7 +44,7 @@ static void __lexer_delimit(struct lexer *l)
 {
 	struct token *new;
 
-	token_delimit(lexer_cur(l));
+	token_delimit(lexer_last(l));
 
 	/* TODO: looks like I'm fucked if malloc fails.
 	 * (we just need xmalloc)
@@ -66,7 +66,7 @@ static void lexer_delimit(struct lexer *l)
 	 *  have been included in a token, processing shall continue until an
 	 *  actual token is delimited.'
 	 */
-	if (token_length(lexer_cur(l)) == 0)
+	if (token_length(lexer_last(l)) == 0)
 		return;
 
 	__lexer_delimit(l);
@@ -82,18 +82,17 @@ static void lexer_delimit_eof(struct lexer *l)
  */
 static int lexer_append_char(struct lexer *l, char c)
 {
-	struct token *cur = lexer_cur(l);
+	struct token *cur = lexer_last(l);
 
 	return token_append(cur, c);
 }
 
 /**
- * Wether the lexer has delimited its latest token.
+ * Wether the lexer has a delimited token.
  */
 static bool lexer_has_delimited(struct lexer *l)
 {
-	/* struct token *cur = lexer_cur(l); */
-	struct token *cur = queue_peek(&l->tokens);
+	struct token *cur = lexer_first(l);
 
 	if (!cur)
 		return false;
@@ -124,25 +123,25 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 {
   /* Returning 0 means you have finished processing the current char. */
   
-	if (token_is_operator(lexer_cur(l))) {
+	if (token_is_operator(lexer_last(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
-		if (can_form_operator(lexer_cur(l), c,  &possible_type))
+		if (can_form_operator(lexer_last(l), c,  &possible_type))
 		{
 			lexer_append_char(l, c);
-			lexer_cur(l)->type = possible_type;
+			lexer_last(l)->type = possible_type;
 
 			return 0;
 		}
 		lexer_delimit(l);
 
-		return 0;
+		/* Fallthrough to last case lexer_append_char. */
 	}
   
 	if (can_start_operator(c)) {
 		lexer_delimit(l);
 
-		lexer_cur(l)->type = TOKTYPE_OPERATOR;
-		/* Fallthrough to last case lexer_append. */
+		lexer_last(l)->type = TOKTYPE_OPERATOR;
+		/* Fallthrough to last case lexer_append_char. */
   }
 
   
@@ -214,7 +213,7 @@ const struct token *lexer_consume(struct lexer *l)
 	struct quoting_state quoting;
 	quoting_reset(&quoting);
 
-	if (!queue_is_empty(&l->tokens)) {
+	if (!queue_is_empty(&l->tokens) && token_is_delimited(lexer_first(l))) {
 		struct token *tok = queue_pop(&l->tokens);
 		token_del(tok);
 	}
@@ -228,7 +227,7 @@ const struct token *lexer_consume(struct lexer *l)
 		lexer_consume_char(l, &quoting);
 	}
 
-	return lexer_cur(l);
+	return lexer_first(l);
 }
 
 /**
