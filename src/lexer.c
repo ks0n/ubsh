@@ -8,7 +8,6 @@
 #include "wordvec.h"
 #include "token_recognition.h"
 
-
 static void quoting_reset(struct quoting_state *q)
 {
 	memset(q, 0, sizeof(*q));
@@ -26,7 +25,7 @@ int lexer_init(struct lexer *l, FILE *input)
 		return -1;
 	}
 
-	l->cur = NULL;
+	queue_init(&l->tokens);
 
 	return 0;
 }
@@ -40,6 +39,19 @@ static void discard_line(struct lexer *l)
 	} while (c != CHARSTREAM_EOF && c != '\n');
 }
 
+static void __lexer_delimit(struct lexer *l)
+{
+	struct token *new;
+
+	token_delimit(lexer_last(l));
+
+	/* TODO: looks like I'm fucked if malloc fails.
+	 * (we just need xmalloc)
+	 */
+	new = token_new();
+	queue_push(&l->tokens, new);
+}
+
 /**
  * Delimit the latest token the lexer is constructing.
  *
@@ -47,7 +59,21 @@ static void discard_line(struct lexer *l)
  */
 static void lexer_delimit(struct lexer *l)
 {
-	token_delimit(l->cur);
+	/* Don't create empty tokens. EOF is an exception.
+	 * https://pubs.opengroup.org/onlinepubs/009695399/utilities/xcu_chap02.html#tag_02_03
+	 * 'If it is indicated that a token is delimited, and no characters
+	 *  have been included in a token, processing shall continue until an
+	 *  actual token is delimited.'
+	 */
+	if (token_length(lexer_last(l)) == 0)
+		return;
+
+	__lexer_delimit(l);
+}
+
+static void lexer_delimit_eof(struct lexer *l)
+{
+	__lexer_delimit(l);
 }
 
 /**
@@ -55,23 +81,22 @@ static void lexer_delimit(struct lexer *l)
  */
 static int lexer_append_char(struct lexer *l, char c)
 {
-	return token_append(l->cur, c);
+	struct token *cur = lexer_last(l);
+
+	return token_append(cur, c);
 }
 
 /**
- * Removes last char appended to the lexer.
- */
-static int lexer_pop_char(struct lexer *l)
-{
-	return token_pop(l->cur);
-}
-
-/**
- * Wether the lexer has delimited its latest token.
+ * Wether the lexer has a delimited token.
  */
 static bool lexer_has_delimited(struct lexer *l)
 {
-	return token_is_delimited(l->cur);
+	struct token *cur = lexer_first(l);
+
+	if (!cur)
+		return false;
+
+	return token_is_delimited(cur);
 }
 
 static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
@@ -95,37 +120,33 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 			   char c)
 {
-  /* Returning 0 means you have finished processing the current char. */
-  
-	if (token_is_operator(l->cur)) {
+	/* Returning 0 means you have finished processing the current char. */
+
+	if (token_is_operator(lexer_last(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
-		if (can_form_operator(l->cur, c,  &possible_type))
-		{
+		if (can_form_operator(lexer_last(l), c, &possible_type)) {
 			lexer_append_char(l, c);
-			l->cur->type = possible_type;
+			lexer_last(l)->type = possible_type;
 
 			return 0;
 		}
 		lexer_delimit(l);
 
-		return 0;
+		/* Fallthrough to last case lexer_append_char. */
 	}
-  
+
 	if (can_start_operator(c)) {
-		if (wordvec_len(l->cur->word)) {
-			lexer_delimit(l);
-		}
+		lexer_delimit(l);
 
-		lexer_append_char(l,c);
-		l->cur->type = TOKTYPE_OPERATOR;
-  }
+		lexer_last(l)->type = TOKTYPE_OPERATOR;
+		/* Fallthrough to last case lexer_append_char. */
+	}
 
-  
 	if (c == '\\') {
 		quoting->backslashed = true;
 		return 0;
 	}
-    
+
 	if (c == '\'') {
 		quoting->singlequoted = true;
 		return 0;
@@ -172,7 +193,7 @@ static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 		quoting->backslashed = false;
 
 	if (c == CHARSTREAM_EOF) {
-		lexer_delimit(l);
+		lexer_delimit_eof(l);
 		return 0;
 	}
 
@@ -184,25 +205,42 @@ static int lexer_consume_char(struct lexer *l, struct quoting_state *quoting)
 	return 0;
 }
 
+static void pop_lexer_first_if_delimited(struct lexer *l)
+{
+	struct token *tok;
+
+	if (!queue_is_empty(&l->tokens) && token_is_delimited(lexer_first(l))) {
+		tok = queue_pop(&l->tokens);
+		token_del(tok);
+	}
+}
+
+static void add_token_if_none_present(struct lexer *l)
+{
+	if (queue_is_empty(&l->tokens)) {
+		struct token *tok = token_new();
+		queue_push(&l->tokens, tok);
+	}
+}
+
+static void setup_lexer(struct lexer *l)
+{
+	pop_lexer_first_if_delimited(l);
+	add_token_if_none_present(l);
+}
+
 const struct token *lexer_consume(struct lexer *l)
 {
 	struct quoting_state quoting;
 	quoting_reset(&quoting);
 
-	if (l->cur)
-		token_del(l->cur);
-
-	l->cur = token_new();
-	if (!l->cur) {
-		warnx("%s: failed to create token", __func__);
-		return NULL;
-	}
+	setup_lexer(l);
 
 	while (!lexer_has_delimited(l)) {
 		lexer_consume_char(l, &quoting);
 	}
 
-	return l->cur;
+	return lexer_first(l);
 }
 
 /**
@@ -210,6 +248,10 @@ const struct token *lexer_consume(struct lexer *l)
  */
 void lexer_cleanup(struct lexer *l)
 {
-	if (l->cur)
-		token_del(l->cur);
+	struct token *tok;
+	while (!queue_is_empty(&l->tokens)) {
+		tok = queue_pop(&l->tokens);
+
+		token_del(tok);
+	}
 }

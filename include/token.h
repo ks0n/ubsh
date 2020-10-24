@@ -47,4 +47,6 @@ enum toktype token_type(const struct token *tok);
 bool token_is_eof(const struct token *tok);
 bool token_is_operator(const struct token *tok);
 
+size_t token_length(const struct token *tok);
+
 #endif /* ! TOKEN_H */
