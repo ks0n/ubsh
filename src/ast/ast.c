@@ -15,7 +15,7 @@ static ast_node_del_f destructors[AST_TYPE_LEN] = {
 
 static ast_node_exec_f executors[AST_TYPE_LEN] = {
 	[AST_NONE] = NULL,
-    [AST_VALUE] = ast_value_exec,
+	[AST_VALUE] = ast_value_exec,
 };
 
 struct ast_node *ast_node_new(enum ast_type type)
@@ -62,5 +62,5 @@ int ast_node_exec(struct ast_node *node, enum ast_type type)
 	if (type != node->type)
 		return AST_INVALID_TYPE;
 
-    return executors[type](node);
+	return executors[type](node);
 }

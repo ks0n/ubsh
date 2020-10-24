@@ -25,8 +25,8 @@ AST_EXECUTOR(ast_value_exec, void_node)
 {
 	struct ast_value *node = (struct ast_value *)void_node;
 
-    if (!node->value)
-        return AST_ERR;
+	if (!node->value)
+		return AST_ERR;
 
-    return AST_OK;
+	return AST_OK;
 }

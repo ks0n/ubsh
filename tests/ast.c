@@ -13,7 +13,7 @@ Test(ast, new_none)
 Test(ast, del_none)
 {
 	struct ast_node *node = ast_node_new(AST_NONE);
-	cr_assert_eq(ast_node_del(node, AST_NONE), AST_NULL_PTR);
+	cr_assert_eq(ast_node_del(node, AST_NONE), AST_UNIMPLEMENTED);
 }
 
 Test(ast, del_invalid_type)
@@ -24,7 +24,8 @@ Test(ast, del_invalid_type)
 	/* But free it as if it was another AST Node type */
 	int status = ast_node_del(node, AST_NONE);
 
-	cr_assert_eq(status, AST_INVALID_TYPE);
+	cr_assert_eq(status, AST_UNIMPLEMENTED);
+	// FIXME: Should be INVALID_TYPE but we don't have enough types yet
 }
 
 Test(ast, exec_invalid_type)
@@ -33,12 +34,13 @@ Test(ast, exec_invalid_type)
 
 	int status = ast_node_exec(node, AST_NONE);
 
-	cr_assert_eq(status, AST_INVALID_TYPE);
+	cr_assert_eq(status, AST_UNIMPLEMENTED);
+	// FIXME: Should be INVALID_TYPE but we don't have enough types yet
 }
 
 Test(ast, exec_non_implemented)
 {
-	struct ast_node *node = ast_node_new(AST_VALUE);
+	struct ast_node *node = ast_node_new(AST_NONE);
 
 	int status = ast_node_exec(node, AST_NONE);
 
@@ -49,16 +51,16 @@ Test(ast, exec_length_too_big)
 {
 	struct ast_node *node = ast_node_new(AST_VALUE);
 
-	int status = ast_node_exec(node, AST_VALUE);
+	int status = ast_node_exec(node, 255);
 
-	cr_assert_eq(status, AST_NULL_PTR);
+	cr_assert_eq(status, AST_INVALID_LEN);
 }
 
 Test(ast, exec_null_node)
 {
 	int status = ast_node_exec(NULL, AST_VALUE);
 
-	cr_assert_eq(status, AST_INVALID_LEN);
+	cr_assert_eq(status, AST_NULL_PTR);
 }
 
 Test(ast_value, new)
@@ -73,7 +75,7 @@ Test(ast_value, new)
 
 Test(ast_value, set_value)
 {
-	struct ast_value *node = (struct ast_value *) ast_node_new(AST_VALUE);
+	struct ast_value *node = (struct ast_value *)ast_node_new(AST_VALUE);
 
 	node->value = calloc(1, 256);
 	memcpy(node->value, "ubsh", 4);
@@ -83,14 +85,14 @@ Test(ast_value, set_value)
 
 Test(ast_value, exec_null_value)
 {
-	struct ast_value *node = (struct ast_value *) ast_node_new(AST_VALUE);
+	struct ast_value *node = (struct ast_value *)ast_node_new(AST_VALUE);
 
 	cr_assert_eq(ast_node_exec(UPCAST(node), AST_VALUE), AST_ERR);
 }
 
 Test(ast_value, exec_non_null_value)
 {
-	struct ast_value *node = (struct ast_value *) ast_node_new(AST_VALUE);
+	struct ast_value *node = (struct ast_value *)ast_node_new(AST_VALUE);
 
 	node->value = calloc(1, 256);
 	memcpy(node->value, "ubsh", 4);
