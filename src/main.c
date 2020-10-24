@@ -5,6 +5,7 @@
 #include <readline/readline.h>
 
 #include "prompt.h"
+#include "logger.h"
 #include "charstream.h"
 #include "lexer.h"
 
@@ -12,6 +13,9 @@ int main(void)
 {
 	char *line = NULL;
 	size_t line_len;
+    LOG(LOG_INFO, "ubsh started");
+    LOG(LOG_WARN, "ubsh is not a true shell yet!");
+    LOG(LOG_ERR, "we're using readline");
 
 	while ((line = readline(prompt_get()))) {
 		line_len = strlen(line);
@@ -24,14 +28,14 @@ int main(void)
 		FILE *file = fmemopen(line, line_len, "r");
 		lexer_init(&lexer, file);
 
-		printf("tokens:\n");
+		LOG(LOG_INFO, "tokens:");
 
 		while (1) {
 			tok = lexer_consume(&lexer);
 			if (!tok || token_is_eof(tok))
 				break;
 
-			printf("- \"%s\", type: %i\n", token_characters(tok),
+			LOG(LOG_INFO, "- \"%s\", type: %i", token_characters(tok),
 			       token_type(tok));
 		}
 
