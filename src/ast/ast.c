@@ -4,13 +4,18 @@
 #include <stdlib.h>
 
 static ast_node_new_f constructors[AST_TYPE_LEN] = {
-	NULL, /* AST_NONE */
-	ast_value_new, /* AST_VALUE */
+	[AST_NONE] = NULL,
+	[AST_VALUE] = ast_value_new,
 };
 
 static ast_node_del_f destructors[AST_TYPE_LEN] = {
-	NULL, /* AST_NONE */
-	ast_value_del, /* AST_VALUE */
+	[AST_NONE] = NULL,
+	[AST_VALUE] = ast_value_del,
+};
+
+static ast_node_exec_f executors[AST_TYPE_LEN] = {
+	[AST_NONE] = NULL,
+    [AST_VALUE] = ast_value_exec,
 };
 
 struct ast_node *ast_node_new(enum ast_type type)
@@ -41,4 +46,21 @@ int ast_node_del(struct ast_node *node, enum ast_type type)
 	destructors[type](node);
 
 	return AST_OK;
+}
+
+int ast_node_exec(struct ast_node *node, enum ast_type type)
+{
+	if (type >= AST_TYPE_LEN)
+		return AST_INVALID_LEN;
+
+	if (!destructors[type])
+		return AST_UNIMPLEMENTED;
+
+	if (!node)
+		return AST_NULL_PTR;
+
+	if (type != node->type)
+		return AST_INVALID_TYPE;
+
+    return executors[type](node);
 }

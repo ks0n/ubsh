@@ -37,8 +37,14 @@ struct ast_node {
 };
 
 /* Functions to define to create a new AST "class" */
+
+/**
+ *
+ *
+ */
 typedef struct ast_node *(*ast_node_new_f)(void);
 typedef void (*ast_node_del_f)(struct ast_node *);
+typedef int (*ast_node_exec_f)(struct ast_node *);
 
 /**
  * "Upcast" an AST node to its base type, ast_node. This is just a wrapper to avoid
@@ -47,14 +53,11 @@ typedef void (*ast_node_del_f)(struct ast_node *);
 #define UPCAST(__NODE) ((struct ast_node *)__NODE)
 
 /**
- * Wrapper to avoid writing the type to define a new AST constructor
+ * Wrappers to avoid writing the type to define new AST "methods"
  */
 #define AST_CONSTRUCTOR(__NAME) struct ast_node *__NAME(void)
-
-/**
- * Wrapper to avoid writing the type to define a new AST destructor
- */
 #define AST_DESTRUCTOR(__NAME, __PARAM) void __NAME(struct ast_node *__PARAM)
+#define AST_EXECUTOR(__NAME, __PARAM) int __NAME(struct ast_node *__PARAM)
 
 /**
  * Instanciate a new node for a given AST type
@@ -74,5 +77,15 @@ struct ast_node *ast_node_new(enum ast_type type);
  * @return AST_OK on success, a negative value form @ast_state on error
  */
 int ast_node_del(struct ast_node *node, enum ast_type type);
+
+/**
+ * Execute a node's content
+ *
+ * @param node AST Node to execute
+ * @param type Type of the AST node to execute
+ *
+ * @return AST_OK on success, a negative value form @ast_state on error
+ */
+int ast_node_exec(struct ast_node *node, enum ast_type type);
 
 #endif /* ! AST_H */
