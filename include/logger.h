@@ -12,12 +12,12 @@
 /**
  * Logging levels available
  */
-typedef enum {
+enum log_level {
 	LOG_INFO = 0,
 	LOG_WARN,
 	LOG_ERR,
 	LOG_FATAL_ERR,
-} log_level;
+};
 
 #define __INNER_PRINT_ARGS(...)                                                \
 	do {                                                                   \
