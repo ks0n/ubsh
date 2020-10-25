@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: alexisehret/archlinux_c_meson:latest
+      image: ks0n/arch_c_ci:1.0.0
 
     steps:
       - uses: actions/checkout@v2
@@ -21,19 +21,13 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
-          pacman -Syyu --noconfirm sudo
-          git clone https://aur.archlinux.org/yay-bin.git
-          cd yay-bin
-          sudo -u nobody 'makepkg -si'
-          cd ..
-          yay -S criterion
           meson build
           ninja -C build
 
   tests:
     runs-on: ubuntu-latest
     container:
-      image: alexisehret/archlinux_c_unittest:latest
+      image: ks0n/arch_c_ci:1.0.0
     needs: build
 
     steps:
@@ -42,11 +36,5 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
-          pacman -Syyu --noconfirm sudo
-          git clone https://aur.archlinux.org/yay-bin.git
-          cd yay-bin
-          sudo -u nobody 'makepkg -si'
-          cd ..
-          yay -S criterion
           meson build
           ninja -C build test
