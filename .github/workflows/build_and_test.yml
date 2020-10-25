@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ks0n/arch_c_ci:1.0.1
 
     steps:
       - uses: actions/checkout@v2
@@ -19,14 +21,13 @@ jobs:
           submodules: 'recursive'
       - name: Build ubsh
         run: |
-          sudo add-apt-repository ppa:snaipewastaken/ppa
-          sudo apt-get update
-          sudo apt install meson ninja-build criterion-dev libreadline-dev
           meson build
           ninja -C build
 
   tests:
     runs-on: ubuntu-latest
+    container:
+      image: ks0n/arch_c_ci:1.0.1
     needs: build
 
     steps:
@@ -35,8 +36,5 @@ jobs:
           submodules: 'recursive'
       - name: Run Unit Tests
         run: |
-          sudo add-apt-repository ppa:snaipewastaken/ppa
-          sudo apt-get update
-          sudo apt install meson ninja-build criterion-dev
           meson build
           ninja -C build test
