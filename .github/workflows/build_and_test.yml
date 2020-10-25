@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: ks0n/arch_c_ci:1.0.0
+      image: ks0n/arch_c_ci:1.0.1
 
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +27,7 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     container:
-      image: ks0n/arch_c_ci:1.0.0
+      image: ks0n/arch_c_ci:1.0.1
     needs: build
 
     steps:
