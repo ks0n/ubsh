@@ -63,7 +63,7 @@ enum log_level {
  *
  * @warning Do not use directly, use the LOG() macro
  */
-static inline int print_level(log_level level)
+static inline int print_level(enum log_level level)
 {
 	switch (level) {
 	case LOG_INFO:
