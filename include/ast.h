@@ -1,14 +1,7 @@
 #ifndef AST_H
 #define AST_H
 
-/**
- * All possible types of nodes for the AST
- */
-enum ast_type {
-	AST_NONE = 0,
-	AST_VALUE,
-	AST_TYPE_LEN, // Amount of types declared for the AST
-};
+#include "utils.h"
 
 /**
  * Return values for AST functions returning an integer
@@ -22,6 +15,14 @@ enum ast_state {
 	AST_OK = 0,
 };
 
+
+/**
+ * Function prototypes for the AST "class" to create a new inherited "class"
+ */
+typedef struct ast_node *(*ast_node_new_func)(void);
+typedef void (*ast_node_del_func)(struct ast_node *);
+typedef int (*ast_node_exec_func)(struct ast_node *);
+
 /**
  * Base structure to derive to create new AST nodes. That struct must always be 
  * aggregated in the derived struct, and not as a pointer. It must always be declared as
@@ -33,56 +34,30 @@ enum ast_state {
  * particular type
  */
 struct ast_node {
-	enum ast_type type;
+	const char *type;
+
+	ast_node_new_func new;
+	ast_node_del_func del;
+	ast_node_exec_func exec;
 };
 
-/**
- * Function prototypes for the AST "class" to create a new inherited "class"
- */
-typedef struct ast_node *(*ast_node_new_f)(void);
-typedef void (*ast_node_del_f)(struct ast_node *);
-typedef int (*ast_node_exec_f)(struct ast_node *);
+#define AST_NODE_MEMBER_NAME __ast_node
+#define AST_NODE_MEMBER struct ast_node AST_NODE_MEMBER_NAME
 
 /**
  * "Upcast" an AST node to its base type, ast_node. This is just a wrapper to avoid
  * typing the cast all the time
  */
-#define UPCAST(__NODE) ((struct ast_node *)__NODE)
+#define TO_AST_NODE(__NODE) (&(__NODE)->AST_NODE_MEMBER_NAME)
+#define FROM_AST_NODE(__ptr, __type) container_of(__ptr, __type, AST_NODE_MEMBER_NAME)
 
-/**
- * Wrappers to avoid writing the type to define new AST "methods"
- */
-#define AST_CONSTRUCTOR(__NAME) struct ast_node *__NAME(void)
-#define AST_DESTRUCTOR(__NAME, __PARAM) void __NAME(struct ast_node *__PARAM)
-#define AST_EXECUTOR(__NAME, __PARAM) int __NAME(struct ast_node *__PARAM)
+#define CALL_AST_METHOD(__NODE, __METHOD) ({ \
+		struct ast_node *ast_node = TO_AST_NODE(__NODE); \
+		ast_node->__METHOD(ast_node); \
+	})
 
-/**
- * Instanciate a new node for a given AST type
- *
- * @param type Type of the AST node to init
- *
- * @return A generic AST node, instanciated with the proper type
- */
-struct ast_node *ast_node_new(enum ast_type type);
-
-/**
- * Release the memory of an instance of an AST node
- *
- * @param node AST Node to free
- * @param type Type of the AST node to free
- *
- * @return AST_OK on success, a negative value form @ast_state on error
- */
-int ast_node_del(struct ast_node *node, enum ast_type type);
-
-/**
- * Execute a node's content
- *
- * @param node AST Node to execute
- * @param type Type of the AST node to execute
- *
- * @return AST_OK on success, a negative value form @ast_state on error
- */
-int ast_node_exec(struct ast_node *node, enum ast_type type);
+#define CALL_AST_NEW(__NODE) CALL_AST_METHOD(__NODE, new)
+#define CALL_AST_DEL(__NODE) CALL_AST_METHOD(__NODE, del)
+#define CALL_AST_EXEC(__NODE) CALL_AST_METHOD(__NODE, exec)
 
 #endif /* ! AST_H */
