@@ -7,7 +7,7 @@ project('ubsh', 'c',
     'b_coverage=true',
     ])
 
-add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
+add_project_arguments('-D_POSIX_C_SOURCE=200809L', '-Wno-pedantic', language: 'c')
 
 inc = include_directories(['include'])
 
