@@ -11,7 +11,7 @@ static struct ast_node *node_value_new(void)
 	if (!node)
 		return NULL;
 
-	node->AST_NODE_MEMBER_NAME = *get_node_value_base();
+	node->AST_NODE_MEMBER_NAME = *get_node_value_methods();
 	node->value = NULL;
 
 	return TO_AST_NODE(node);
@@ -35,14 +35,14 @@ static int node_value_exec(struct ast_node *ast_node)
 	return AST_OK;
 }
 
-static struct ast_node node_value_base = {
+static struct ast_node node_value_methods = {
 	.type = "node_value",
 	.new = node_value_new,
 	.del = node_value_del,
 	.exec = node_value_exec,
 };
 
-const struct ast_node *get_node_value_base(void)
+const struct ast_node *get_node_value_methods(void)
 {
-	return &node_value_base;
+	return &node_value_methods;
 }

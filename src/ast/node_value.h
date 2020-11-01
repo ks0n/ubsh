@@ -6,4 +6,4 @@ struct node_value {
 	char *value;
 };
 
-const struct ast_node *get_node_value_base(void);
+const struct ast_node *get_node_value_methods(void);
