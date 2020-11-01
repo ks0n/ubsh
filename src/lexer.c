@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "logger.h"
 #include "utils.h"
 #include "wordvec.h"
 #include "token_recognition.h"
@@ -21,7 +22,7 @@ static bool inside_quoting(const struct quoting_state *q)
 int lexer_init(struct lexer *l, FILE *input)
 {
 	if (charstream_init(&l->stream, input) < 0) {
-		warnx("%s: failed to init charstream", __func__);
+		LOG(LOG_WARN, "%s: failed to init charstream", __func__);
 		return -1;
 	}
 
