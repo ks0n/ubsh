@@ -8,12 +8,12 @@ project('ubsh', 'c',
     ])
 
 add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
+add_project_arguments('-Wno-pedantic', language: 'c')
 
 inc = include_directories(['include', 'src'])
 
 src = [
-  'src/ast/ast.c',
-  'src/ast/ast_value.c',
+  'src/ast/node_value.c',
   'src/prompt.c',
   'src/token_recognition.c',
   'src/charstream.c',
