@@ -8,6 +8,8 @@
 static struct ast_node *node_value_new(void)
 {
 	struct node_value *node = malloc(sizeof(*node));
+	if (!node)
+		return NULL;
 
 	node->AST_NODE_MEMBER_NAME = *get_node_value_base();
 	node->value = NULL;
