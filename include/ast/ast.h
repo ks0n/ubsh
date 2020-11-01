@@ -22,16 +22,6 @@ typedef struct ast_node *(*ast_node_new_func)(void);
 typedef void (*ast_node_del_func)(struct ast_node *);
 typedef int (*ast_node_exec_func)(struct ast_node *);
 
-/**
- * Base structure to derive to create new AST nodes. That struct must always be 
- * aggregated in the derived struct, and not as a pointer. It must always be declared as
- * the FIRST member of that derived struct.
- *
- * This way, the base functions for a given AST type will be stored in a "virtual table",
- * which is a static table of function pointers. This will enable the user to always call
- * the same functions, which will then dispatch on the correct implementation for that
- * particular type
- */
 struct ast_node {
 	const char *type;
 

@@ -1,6 +1,6 @@
 project('ubsh', 'c',
   default_options: [
-    'warning_level=2',
+    'warning_level=3',
     'debug=true',
     'b_sanitize=address',
     'c_std=c99',
