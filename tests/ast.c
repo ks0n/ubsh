@@ -3,47 +3,43 @@
 #include "ast.h"
 #include "ast/node_value.h"
 
-Test(node_value, new)
+struct node_value *g_node;
+
+void setup_node_value(void)
 {
 	struct ast_node *base_node = get_node_value_base()->new();
-	struct node_value *node = FROM_AST_NODE(base_node, struct node_value);
-
-	cr_assert_null(node->value);
-
-	CALL_AST_DEL(node);
+	g_node = FROM_AST_NODE(base_node, struct node_value);
 }
 
-Test(node_value, set_value)
+void teardown_node_value(void)
 {
-	struct ast_node *base_node = get_node_value_base()->new();
-	struct node_value *node = FROM_AST_NODE(base_node, struct node_value);
-
-	node->value = calloc(1, 256);
-	memcpy(node->value, "ubsh", 4);
-
-	CALL_AST_DEL(node);
+	CALL_AST_DEL(g_node);
 }
 
-Test(node_value, exec_null_value)
+Test(node_value, new, .init = setup_node_value, .fini = teardown_node_value)
 {
-	struct ast_node *base_node = get_node_value_base()->new();
-	struct node_value *node = FROM_AST_NODE(base_node, struct node_value);
-
-	cr_assert_eq(CALL_AST_EXEC(node), AST_OK);
-	cr_assert_eq(CALL_AST_EXEC(node), AST_OK);
-
-	CALL_AST_DEL(node);
+	cr_assert_null(g_node->value);
 }
 
-Test(node_value, exec_non_null_value)
+Test(node_value, set_value, .init = setup_node_value,
+     .fini = teardown_node_value)
 {
-	struct ast_node *base_node = get_node_value_base()->new();
-	struct node_value *node = FROM_AST_NODE(base_node, struct node_value);
+	g_node->value = calloc(1, 256);
+	memcpy(g_node->value, "ubsh", 4);
+}
 
-	node->value = calloc(1, 256);
-	memcpy(node->value, "ubsh", 4);
+Test(node_value, exec_null_value, .init = setup_node_value,
+     .fini = teardown_node_value)
+{
+	cr_assert_eq(CALL_AST_EXEC(g_node), AST_OK);
+	cr_assert_eq(CALL_AST_EXEC(g_node), AST_OK);
+}
 
-	cr_assert_eq(CALL_AST_EXEC(node), AST_OK);
+Test(node_value, exec_non_null_value, .init = setup_node_value,
+     .fini = teardown_node_value)
+{
+	g_node->value = calloc(1, 256);
+	memcpy(g_node->value, "ubsh", 4);
 
-	CALL_AST_DEL(node);
+	cr_assert_eq(CALL_AST_EXEC(g_node), AST_OK);
 }
