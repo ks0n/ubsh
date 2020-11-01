@@ -7,7 +7,7 @@ struct node_value *g_node;
 
 void setup_node_value(void)
 {
-	struct ast_node *base_node = get_node_value_base()->new();
+	struct ast_node *base_node = get_node_value_base()->new ();
 	g_node = FROM_AST_NODE(base_node, struct node_value);
 }
 

@@ -15,7 +15,6 @@ enum ast_state {
 	AST_OK = 0,
 };
 
-
 /**
  * Function prototypes for the AST "class" to create a new inherited "class"
  */
@@ -49,11 +48,13 @@ struct ast_node {
  * typing the cast all the time
  */
 #define TO_AST_NODE(__NODE) (&(__NODE)->AST_NODE_MEMBER_NAME)
-#define FROM_AST_NODE(__ptr, __type) container_of(__ptr, __type, AST_NODE_MEMBER_NAME)
+#define FROM_AST_NODE(__ptr, __type)                                           \
+	container_of(__ptr, __type, AST_NODE_MEMBER_NAME)
 
-#define CALL_AST_METHOD(__NODE, __METHOD) ({ \
-		struct ast_node *ast_node = TO_AST_NODE(__NODE); \
-		ast_node->__METHOD(ast_node); \
+#define CALL_AST_METHOD(__NODE, __METHOD)                                      \
+	({                                                                     \
+		struct ast_node *ast_node = TO_AST_NODE(__NODE);               \
+		ast_node->__METHOD(ast_node);                                  \
 	})
 
 #define CALL_AST_NEW(__NODE) CALL_AST_METHOD(__NODE, new)
