@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "ast.h"
-#include "node_value.h"
+#include "ast/ast.h"
+#include "ast/node_value.h"
 
 #include "utils.h"
 

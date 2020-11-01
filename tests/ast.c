@@ -1,6 +1,6 @@
 #include <criterion/criterion.h>
 
-#include "ast.h"
+#include "ast/ast.h"
 #include "ast/node_value.h"
 
 struct node_value *g_node;

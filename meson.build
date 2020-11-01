@@ -1,6 +1,6 @@
 project('ubsh', 'c',
   default_options: [
-    'warning_level=3',
+    'warning_level=2',
     'debug=true',
     'b_sanitize=address',
     'c_std=c99',
@@ -10,7 +10,7 @@ project('ubsh', 'c',
 add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
 add_project_arguments('-Wno-pedantic', language: 'c')
 
-inc = include_directories(['include', 'src'])
+inc = include_directories(['include'])
 
 src = [
   'src/ast/node_value.c',
