@@ -6,12 +6,14 @@ project('ubsh', 'c',
     'c_std=c99',
     'b_coverage=true',
     ])
-
-add_project_arguments('-D_POSIX_C_SOURCE=200809L', '-Wno-pedantic', language: 'c')
+    
+add_project_arguments('-D_POSIX_C_SOURCE=200809L', language: 'c')
+add_project_arguments('-Wno-pedantic', language: 'c')
 
 inc = include_directories(['include'])
 
 src = [
+  'src/ast/node_value.c',
   'src/prompt.c',
   'src/token_recognition.c',
   'src/charstream.c',
@@ -29,6 +31,7 @@ readline = dependency('readline')
 executable('ubsh', src, main, dependencies: [readline], include_directories: inc)
 
 unit_tests_src = [
+  'tests/ast.c',
   'tests/charstream.c',
   'tests/wordvec.c',
   'tests/lexer.c',
