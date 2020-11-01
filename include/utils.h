@@ -13,9 +13,6 @@
 
 #define UNUSED __attribute__((unused))
 
-/* Taken from:
- * https://elixir.bootlin.com/linux/v5.9.1/source/scripts/kconfig/list.h#L19
- */
 #define container_of(ptr, type, member) ({                      \
 	const __typeof__( ((type *)0)->member ) *__mptr = (ptr);    \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
