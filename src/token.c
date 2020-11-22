@@ -119,6 +119,16 @@ bool token_is_operator(const struct token *tok)
 	}
 }
 
+bool token_is_separator_op(const struct token *tok)
+{
+	/* Checks according to:
+	 * https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html#tag_02_10_02
+	 */
+	// TODO: check if token is quoted.
+
+	return token_length(tok) == 1 && (*token_characters(tok) == ';' || (*token_characters(tok) == '&'));
+}
+
 size_t token_length(const struct token *tok)
 {
 	return wordvec_len(tok->word);

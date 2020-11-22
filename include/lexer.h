@@ -47,4 +47,6 @@ inline static struct token *lexer_last(struct lexer *l)
 	return queue_peek_last(&l->tokens);
 }
 
+const struct token *lexer_peek(struct lexer *l);
+
 #endif /* ! LEXER_H */
