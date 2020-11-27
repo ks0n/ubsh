@@ -2,6 +2,8 @@
 
 #include <stdlib.h>
 
+#include "command.h"
+
 struct ast_node *node_simple_command_new(void)
 {
 	struct node_simple_command *node = malloc(sizeof(*node));
@@ -9,7 +11,8 @@ struct ast_node *node_simple_command_new(void)
 		return NULL;
 
 	node->AST_NODE_MEMBER_NAME = *get_node_simple_command_methods();
-	node->command = NULL;
+	node->argc = 0;
+	node->argv[0] = NULL;
 
 	return TO_AST_NODE(node);
 }
@@ -18,15 +21,17 @@ void node_simple_command_del(struct ast_node *ast_node)
 {
 	struct node_simple_command *node = FROM_AST_NODE(ast_node, struct node_simple_command);
 
-	free(node->command);
+	for (int i = 0; i < node->argc; i++)
+		free(node->argv[i]);
+
 	free(node);
 }
 
 int node_simple_command_exec(struct ast_node *ast_node)
 {
 	struct node_simple_command *node = FROM_AST_NODE(ast_node, struct node_simple_command);
-
-	return system(node->command);
+	
+	return command_execute(node->argc, node->argv);
 }
 
 static struct ast_node node_simple_command = {

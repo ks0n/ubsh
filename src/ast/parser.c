@@ -13,9 +13,21 @@ static int parse_simple_command(struct ast_node **simple_command, struct lexer *
 	// TODO: parse multiple word commands.
 	// for this to work, we need to better and lexer categorized (make sure only words show up as words)
 
-	const struct token *tok = lexer_consume(l);
+	// (element)*
+	while (1) {
+		const struct token *tok = lexer_peek(l);
 
-	node->command = strdup(token_characters(tok));
+		if (token_type(tok) != TOKTYPE_WORD)
+			break;
+
+
+		node->argv[node->argc] = strdup(token_characters(tok));
+		node->argc++;
+
+		lexer_consume(l);
+	}
+
+	node->argv[node->argc] = NULL;
 
 	return 0;
 }

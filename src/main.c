@@ -26,7 +26,6 @@ int main(void)
 			continue;
 
 		struct lexer lexer;
-		const struct token *tok = NULL;
 		FILE *file = fmemopen(line, line_len, "r");
 		lexer_init(&lexer, file);
 
@@ -55,7 +54,7 @@ int main(void)
 
 cleanup:
 		if (root)
-			root->exec(root);
+			root->del(root);
 		lexer_cleanup(&lexer);
 		fclose(file);
 		free(line);

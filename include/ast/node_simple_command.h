@@ -3,10 +3,13 @@
 
 #include "ast/ast.h"
 
+#define ARGV_MAX 512
+
 struct node_simple_command {
 	AST_NODE_MEMBER;
 
-	char *command;
+  int argc;
+	char *argv[ARGV_MAX];
 };
 
 const struct ast_node *get_node_simple_command_methods(void);
