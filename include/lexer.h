@@ -25,10 +25,8 @@ void lexer_cleanup(struct lexer *l);
 /**
  * Read chars from the charstream owned by @l until a token is delimited.
  * Think of this as an iterator over the input tokens.
- *
- * @return token read by the lexer (the token is owned by the lexer)
  */
-const struct token *lexer_consume(struct lexer *l);
+void lexer_consume(struct lexer *l);
 
 /**
  * Return the token that will come out first of the lexer.

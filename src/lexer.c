@@ -224,22 +224,29 @@ static void add_token_if_none_present(struct lexer *l)
 	}
 }
 
-static void setup_lexer(struct lexer *l)
-{
-	pop_lexer_first_if_delimited(l);
-	add_token_if_none_present(l);
-}
-
-const struct token *lexer_consume(struct lexer *l)
+static void read_token(struct lexer *l)
 {
 	struct quoting_state quoting;
 	quoting_reset(&quoting);
 
-	setup_lexer(l);
+	add_token_if_none_present(l);
 
 	while (!lexer_has_delimited(l)) {
 		lexer_consume_char(l, &quoting);
 	}
+}
+
+void lexer_consume(struct lexer *l)
+{
+	pop_lexer_first_if_delimited(l);
+
+	read_token(l);
+}
+
+const struct token *lexer_peek(struct lexer *l)
+{
+	if (queue_is_empty(&l->tokens))
+		read_token(l);
 
 	return lexer_first(l);
 }
