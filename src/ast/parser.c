@@ -5,10 +5,12 @@
 #include "ast/node_list.h"
 #include "ast/node_simple_command.h"
 
-static int parse_simple_command(struct ast_node **simple_command, struct lexer *l)
+static int parse_simple_command(struct ast_node **simple_command,
+				struct lexer *l)
 {
-	*simple_command = get_node_simple_command_methods()->new();
-	struct node_simple_command *node = FROM_AST_NODE(*simple_command, struct node_simple_command);
+	*simple_command = get_node_simple_command_methods()->new ();
+	struct node_simple_command *node =
+		FROM_AST_NODE(*simple_command, struct node_simple_command);
 
 	// TODO: parse multiple word commands.
 	// for this to work, we need to better and lexer categorized (make sure only words show up as words)
@@ -19,7 +21,6 @@ static int parse_simple_command(struct ast_node **simple_command, struct lexer *
 
 		if (token_type(tok) != TOKTYPE_WORD)
 			break;
-
 
 		node->argv[node->argc] = strdup(token_characters(tok));
 		node->argc++;
@@ -35,7 +36,7 @@ static int parse_simple_command(struct ast_node **simple_command, struct lexer *
 static int parse_list(struct ast_node **root, struct lexer *l)
 {
 	const struct token *tok;
-	*root = get_node_list_methods()->new();
+	*root = get_node_list_methods()->new ();
 	struct node_list *list = FROM_AST_NODE(*root, struct node_list);
 
 	struct linked_list_node **cur_and_or = &list->head;
@@ -53,7 +54,7 @@ static int parse_list(struct ast_node **root, struct lexer *l)
 		// TODO: we need to be able to check if this is TOKTYPE_WORD
 		if (!token_is_separator_op(tok))
 			break;
-		
+
 		lexer_consume(l);
 	}
 

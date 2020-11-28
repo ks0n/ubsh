@@ -9,9 +9,9 @@ struct linked_list_node {
 };
 
 struct node_list {
-  AST_NODE_MEMBER;
+	AST_NODE_MEMBER;
 
-  struct linked_list_node *head;
+	struct linked_list_node *head;
 };
 
 const struct ast_node *get_node_list_methods(void);

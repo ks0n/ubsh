@@ -40,19 +40,19 @@ int main(void)
 		printf("$? %d\n", exit_code);
 
 		/* LOG(LOG_INFO, "tokens:"); */
-                /*  */
+		/*  */
 		/* while (1) { */
 		/* 	tok = lexer_consume(&lexer); */
 		/* 	if (!tok || token_is_eof(tok)) */
 		/* 		break; */
-                /*  */
+		/*  */
 		/* 	LOG(LOG_INFO, "- \"%s\", type: %i", */
 		/* 	    token_characters(tok), token_type(tok)); */
 		/* } */
 
 		puts("");
 
-cleanup:
+	cleanup:
 		if (root)
 			root->del(root);
 		lexer_cleanup(&lexer);

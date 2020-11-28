@@ -126,7 +126,8 @@ bool token_is_separator_op(const struct token *tok)
 	 */
 	// TODO: check if token is quoted.
 
-	return token_length(tok) == 1 && (*token_characters(tok) == ';' || (*token_characters(tok) == '&'));
+	return token_length(tok) == 1 && (*token_characters(tok) == ';' ||
+					  (*token_characters(tok) == '&'));
 }
 
 size_t token_length(const struct token *tok)

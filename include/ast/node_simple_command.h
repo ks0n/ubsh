@@ -8,7 +8,7 @@
 struct node_simple_command {
 	AST_NODE_MEMBER;
 
-  int argc;
+	int argc;
 	char *argv[ARGV_MAX];
 };
 

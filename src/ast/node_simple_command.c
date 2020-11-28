@@ -19,7 +19,8 @@ struct ast_node *node_simple_command_new(void)
 
 void node_simple_command_del(struct ast_node *ast_node)
 {
-	struct node_simple_command *node = FROM_AST_NODE(ast_node, struct node_simple_command);
+	struct node_simple_command *node =
+		FROM_AST_NODE(ast_node, struct node_simple_command);
 
 	for (int i = 0; i < node->argc; i++)
 		free(node->argv[i]);
@@ -29,8 +30,9 @@ void node_simple_command_del(struct ast_node *ast_node)
 
 int node_simple_command_exec(struct ast_node *ast_node)
 {
-	struct node_simple_command *node = FROM_AST_NODE(ast_node, struct node_simple_command);
-	
+	struct node_simple_command *node =
+		FROM_AST_NODE(ast_node, struct node_simple_command);
+
 	return command_execute(node->argc, node->argv);
 }
 
