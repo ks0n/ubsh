@@ -33,12 +33,13 @@ struct token {
 	bool delimited;
 
 	struct wordvec *word;
+	struct wordvec *quote_map;
 };
 
 struct token *token_new(void);
 void token_del(struct token *tok);
 
-int token_append(struct token *tok, char c);
+int token_append(struct token *tok, char c, bool quoted);
 int token_pop(struct token *tok);
 
 bool token_is_delimited(const struct token *tok);

@@ -8,7 +8,7 @@
 
 struct token *token_new(void)
 {
-	struct token *tok = malloc(sizeof(*tok));
+	struct token *tok = calloc(1, sizeof(*tok));
 	if (!tok)
 		return NULL;
 
@@ -17,7 +17,10 @@ struct token *token_new(void)
 	tok->delimited = false;
 
 	tok->word = wordvec_new();
-	if (!tok->word) {
+	tok->quote_map = wordvec_new();
+	if (!tok->word || !tok->quote_map) {
+		free(tok->word);
+		free(tok->quote_map);
 		free(tok);
 		return NULL;
 	}
@@ -28,12 +31,16 @@ struct token *token_new(void)
 void token_del(struct token *tok)
 {
 	wordvec_del(tok->word);
+	wordvec_del(tok->quote_map);
 	free(tok);
 }
 
-int token_append(struct token *tok, char c)
+int token_append(struct token *tok, char c, bool quoted)
 {
 	if (wordvec_append(tok->word, c) < 0)
+		return -1;
+
+	if (wordvec_append(tok->quote_map, quoted) < 0)
 		return -1;
 
 	return 0;
@@ -41,6 +48,7 @@ int token_append(struct token *tok, char c)
 
 int token_pop(struct token *tok)
 {
+	wordvec_pop(tok->quote_map);
 	return wordvec_pop(tok->word);
 }
 

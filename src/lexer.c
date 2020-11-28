@@ -3,6 +3,7 @@
 #include <err.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "logger.h"
 #include "utils.h"
@@ -78,13 +79,23 @@ static void lexer_delimit_eof(struct lexer *l)
 }
 
 /**
- * Append a character to the latest token the lexer is constructing.
+ * Append a quoted character to the latest token the lexer is constructing.
  */
-static int lexer_append_char(struct lexer *l, char c)
+static int lexer_append_quoted_char(struct lexer *l, char c)
 {
 	struct token *cur = lexer_last(l);
 
-	return token_append(cur, c);
+	return token_append(cur, c, true);
+}
+
+/**
+ * Append a unquoted character to the latest token the lexer is constructing.
+ */
+static int lexer_append_unquoted_char(struct lexer *l, char c)
+{
+	struct token *cur = lexer_last(l);
+
+	return token_append(cur, c, false);
 }
 
 /**
@@ -112,7 +123,7 @@ static int handle_quoted(struct lexer *l, struct quoting_state *quoting, char c)
 		return 0;
 	}
 
-	if (lexer_append_char(l, c) < 0)
+	if (lexer_append_quoted_char(l, c) < 0)
 		return -1;
 
 	return 0;
@@ -126,7 +137,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 	if (token_is_operator(lexer_last(l))) {
 		enum toktype possible_type = TOKTYPE_UNCATEGORIZED;
 		if (can_form_operator(lexer_last(l), c, &possible_type)) {
-			lexer_append_char(l, c);
+			lexer_append_unquoted_char(l, c);
 			lexer_last(l)->type = possible_type;
 
 			return 0;
@@ -180,7 +191,7 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 		return 0;
 	}
 
-	if (lexer_append_char(l, c) < 0)
+	if (lexer_append_unquoted_char(l, c) < 0)
 		return -1;
 
 	return 0;
