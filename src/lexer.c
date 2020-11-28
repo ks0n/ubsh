@@ -131,6 +131,13 @@ static int handle_unquoted(struct lexer *l, struct quoting_state *quoting,
 
 			return 0;
 		}
+
+		struct token *tok = lexer_last(l);
+		if (!token_strcmp(tok, ";"))
+			tok->type = TOKTYPE_SEP_SEMI;
+		else if (!token_strcmp(tok, "&"))
+			tok->type = TOKTYPE_SEP_AND;
+
 		lexer_delimit(l);
 
 		/* Fallthrough to last case lexer_append_char. */

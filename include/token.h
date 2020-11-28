@@ -21,6 +21,10 @@ enum toktype {
 	TOKTYPE_LESSGREAT, /* <> */
 	TOKTYPE_DLESSDASH, /* <<- */
 	TOKTYPE_CLOBBER, /* >| */
+
+	/* Custom operators defined by ubsh */
+	TOKTYPE_SEP_SEMI,
+	TOKTYPE_SEP_AND,
 };
 
 struct token {
@@ -41,6 +45,7 @@ bool token_is_delimited(const struct token *tok);
 void token_delimit(struct token *tok);
 
 const char *token_characters(const struct token *tok);
+int token_strcmp(const struct token *tok, const char *str);
 
 enum toktype token_type(const struct token *tok);
 
