@@ -21,7 +21,6 @@ src = [
   'src/token.c',
   'src/lexer.c',
   'src/queue.c',
-  'src/vec.c',
   'src/ast/parser.c',
   'src/ast/node_list.c',
   'src/ast/node_simple_command.c',
