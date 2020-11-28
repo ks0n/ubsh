@@ -61,9 +61,15 @@ static bool token_eof_check(struct token *tok)
 {
 	return wordvec_len(tok->word) == 0;
 }
+
 static bool token_word_check(struct token *tok)
 {
 	return true;
+}
+
+static bool token_not_check(struct token *tok)
+{
+	return !token_strcmp(tok, "!") && !token_is_quoted_at(tok, 0);
 }
 
 static void categorize(struct token *tok)
@@ -72,6 +78,7 @@ static void categorize(struct token *tok)
 		enum toktype type;
 		bool (*check)(struct token *tok);
 	} token_check[] = { { TOKTYPE_EOF, token_eof_check },
+			    { TOKTYPE_NOT, token_not_check },
 			    { TOKTYPE_WORD, token_word_check } };
 
 	/* We might already have an obvious categorization at this stage */
@@ -106,6 +113,11 @@ int token_strcmp(const struct token *tok, const char *str)
 enum toktype token_type(const struct token *tok)
 {
 	return tok->type;
+}
+
+int token_is_quoted_at(const struct token *tok, size_t index)
+{
+	return wordvec_get(tok->quote_map, index);
 }
 
 bool token_is_eof(const struct token *tok)

@@ -1,5 +1,5 @@
-#ifndef NODE_LIST
-#define NODE_LIST
+#ifndef NODE_LIST_H
+#define NODE_LIST_H
 
 #include "ast/ast.h"
 
@@ -16,4 +16,4 @@ struct node_list {
 
 const struct ast_node *get_node_list_methods(void);
 
-#endif /* ! NODE_LIST */
+#endif /* ! NODE_LIST_H */

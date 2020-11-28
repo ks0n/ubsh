@@ -3,11 +3,21 @@
 #include <string.h>
 
 #include "ast/node_list.h"
+#include "ast/node_not.h"
 #include "ast/node_simple_command.h"
 
 static int parse_simple_command(struct ast_node **simple_command,
 				struct lexer *l)
 {
+	if (token_type(lexer_peek(l)) == TOKTYPE_NOT) {
+		*simple_command = get_node_not_methods()->new ();
+		struct node_not *not =
+			FROM_AST_NODE(*simple_command, struct node_not);
+		simple_command = &not ->node;
+
+		lexer_consume(l);
+	}
+
 	*simple_command = get_node_simple_command_methods()->new ();
 	struct node_simple_command *node =
 		FROM_AST_NODE(*simple_command, struct node_simple_command);

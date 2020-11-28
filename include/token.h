@@ -25,6 +25,7 @@ enum toktype {
 	/* Custom operators defined by ubsh */
 	TOKTYPE_SEP_SEMI,
 	TOKTYPE_SEP_AND,
+	TOKTYPE_NOT,
 };
 
 struct token {
@@ -49,6 +50,8 @@ const char *token_characters(const struct token *tok);
 int token_strcmp(const struct token *tok, const char *str);
 
 enum toktype token_type(const struct token *tok);
+
+int token_is_quoted_at(const struct token *tok, size_t index);
 
 bool token_is_eof(const struct token *tok);
 bool token_is_operator(const struct token *tok);
