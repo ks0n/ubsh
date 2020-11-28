@@ -34,8 +34,6 @@ main = [
 readline = dependency('readline')
 executable('ubsh', src, main, dependencies: [readline], include_directories: inc)
 
-
-
 unit_tests_src = [
   'tests/ast.c',
   'tests/charstream.c',
