@@ -23,8 +23,7 @@ int lexer_init(struct lexer *l, FILE *input);
 void lexer_cleanup(struct lexer *l);
 
 /**
- * Read chars from the charstream owned by @l until a token is delimited.
- * Think of this as an iterator over the input tokens.
+ * Discard the token returned by lexer_peek()
  */
 void lexer_consume(struct lexer *l);
 
