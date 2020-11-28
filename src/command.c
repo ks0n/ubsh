@@ -7,7 +7,7 @@
 
 #include "logger.h"
 
-int command_execute(int argc, char * const *argv)
+int command_execute(int argc, char *const *argv)
 {
 	(void)argc;
 	char *prog = argv[0];
@@ -23,7 +23,7 @@ int command_execute(int argc, char * const *argv)
 	} else if (child_pid < 0) {
 		return -1;
 	}
-	
+
 	// Parent
 
 	do {
