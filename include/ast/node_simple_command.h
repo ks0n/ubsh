@@ -3,6 +3,7 @@
 
 #include "ast/ast.h"
 
+// TODO: This need to be changed (ex: Lots of files when creating a tarball)
 #define ARGV_MAX 512
 
 struct node_simple_command {
