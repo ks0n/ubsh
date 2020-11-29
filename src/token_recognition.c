@@ -35,7 +35,7 @@ bool can_form_operator(struct token *tok, char c, enum toktype *type)
 	if (tok_len < 1)
 		return found;
 
-	token_append(tok, c);
+	token_append(tok, c, false);
 	tok_len = wordvec_len(tok->word);
 
 	for (i = 0; i < ARRAY_LENGTH(operators); i++) {

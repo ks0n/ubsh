@@ -14,6 +14,7 @@ inc = include_directories(['include'])
 
 src = [
   'src/ast/node_value.c',
+  'src/ast/node_not.c',
   'src/prompt.c',
   'src/token_recognition.c',
   'src/charstream.c',

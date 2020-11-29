@@ -1,5 +1,5 @@
-#ifndef NODE_SIMPLE_COMMAND
-#define NODE_SIMPLE_COMMAND
+#ifndef NODE_SIMPLE_COMMAND_H
+#define NODE_SIMPLE_COMMAND_H
 
 #include "ast/ast.h"
 
@@ -15,4 +15,4 @@ struct node_simple_command {
 
 const struct ast_node *get_node_simple_command_methods(void);
 
-#endif /* ! NODE_SIMPLE_COMMAND */
+#endif /* ! NODE_SIMPLE_COMMAND_H */
