@@ -4,6 +4,7 @@
 
 #include "ast/node_list.h"
 #include "ast/node_not.h"
+
 #include "ast/node_simple_command.h"
 
 static int parse_simple_command(struct ast_node **simple_command,
