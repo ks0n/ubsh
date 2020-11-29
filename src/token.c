@@ -1,6 +1,7 @@
 #include "token.h"
 
 #include <stdbool.h>
+#include <string.h>
 
 #include "wordvec.h"
 #include "utils.h"
@@ -89,6 +90,11 @@ const char *token_characters(const struct token *tok)
 	return wordvec_chars(tok->word);
 }
 
+int token_strcmp(const struct token *tok, const char *str)
+{
+	return strcmp(token_characters(tok), str);
+}
+
 enum toktype token_type(const struct token *tok)
 {
 	return tok->type;
@@ -117,6 +123,17 @@ bool token_is_operator(const struct token *tok)
 	default:
 		return false;
 	}
+}
+
+bool token_is_separator_op(const struct token *tok)
+{
+	/* Checks according to:
+	 * https://pubs.opengroup.org/onlinepubs/009604499/utilities/xcu_chap02.html#tag_02_10_02
+	 */
+	// TODO: check if token is quoted.
+
+	return token_type(tok) == TOKTYPE_SEP_SEMI ||
+	       token_type(tok) == TOKTYPE_SEP_AND;
 }
 
 size_t token_length(const struct token *tok)
